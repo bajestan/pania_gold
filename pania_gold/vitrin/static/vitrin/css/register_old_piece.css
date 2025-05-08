@@ -1,0 +1,187 @@
+/* تنظیم فونت پیش‌فرض برای کل صفحه */
+body {
+    font-family: "Vazirmatn", sans-serif; /* فونت پیش‌فرض */
+    font-size: 14px; /* اندازه فونت پیش‌فرض */
+    line-height: 1.5; /* فاصله بین خطوط */
+    color: #646464; /* رنگ متن پیش‌فرض */
+    display: flex;
+    justify-content: center; /* تراز کردن به صورت افقی در وسط */
+    margin: 0;
+    padding: 0;
+    background-color: #dbdbde; /* رنگ پس‌زمینه صفحه */
+}
+
+/* تنظیمات کانتینر اصلی */
+.container {
+    max-width: 900px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-top: 70px;
+}
+
+/* تنظیمات فرم گروه */
+.form-group {
+    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* تنظیمات فیلدهای ورودی */
+input, textarea, select {
+    width: 300px; /* عرض ثابت */
+    height: 30px; /* افزایش ارتفاع فیلدهای ورودی */
+    padding: 5px; /* کاهش فضای داخلی از 15px به 10px برای تنظیم بهتر */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 5px; /* افزایش فاصله عمودی برای نمای بهتر */
+    font-size: 14px;
+    font-family: "Vazirmatn", sans-serif; /* اطمینان از استفاده از فونت */
+}
+
+/* تنظیمات textarea */
+textarea {
+    height: 120px; /* افزایش ارتفاع برای textarea */
+    width: 300px; /* عرض ثابت برای textarea */
+}
+
+
+/* تنظیمات برچسب‌های فرم */
+label {
+    font-size: 12px;
+    font-family: "Vazirmatn", sans-serif;
+    display: block;
+    margin-bottom: 5px; /* کاهش فاصله عمودی */
+}
+
+/* تنظیمات عنوان‌ها */
+h2 {
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 24px;
+    font-family: "Vazirmatn", sans-serif;
+    color: #0056b3;
+}
+
+/* دکمه‌ها */
+
+/* دکمه ثبت */
+button[type="submit"] {
+    background-color: #28a745; /* رنگ پس‌زمینه سبز برای دکمه ثبت */
+    border-color: #28a745; /* رنگ حاشیه سبز */
+    color: #fff; /* رنگ متن سفید */
+    padding: 5px 0; /* فضای داخلی بیشتر */
+    border-radius: 5px; /* شعاع گوشه‌ها */
+    cursor: pointer;
+    text-align: center;
+    width: 100%; /* هم‌عرض با فیلدهای ورودی */
+    margin: 2px 0; /* فاصله از بالا و پایین */
+    font-size: 14px; /* اندازه بزرگتر فونت */
+    font-family: "Vazirmatn", sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838; /* رنگ سبز تیره‌تر در حالت هاور */
+    border-color: #1e7e34;
+}
+
+/* تنظیمات دکمه‌های حذف و افزودن قطعات */
+.btn-primary, .btn-danger {
+    background-color: #f1f2f5; /* رنگ پس‌زمینه آبی */
+    border-color: #eaecef; /* رنگ حاشیه آبی */
+    color: #031136; /* رنگ متن سفید */
+    padding: 5px 8px; /* فضای داخلی کوچک‌تر */
+    border-radius: 5px; /* شعاع گوشه‌ها */
+    cursor: pointer;
+    font-size: 14px; /* اندازه فونت کوچکتر */
+    font-family: "Vazirmatn", sans-serif;
+    transition: background-color 0.3s ease;
+    width: auto; /* عرض خودکار */
+    display: inline-block; /* نمایش دکمه‌ها در یک سطر */
+    margin-right: 10px; /* فاصله افقی */
+}
+
+.btn-primary:hover, .btn-danger:hover {
+    background-color: #278bfa; /* رنگ آبی تیره‌تر در حالت هاور */
+    border-color: #0056b3;
+}
+
+/* استایل برای کادر جستجو */
+.select2-container .select2-selection--single .select2-selection__rendered {
+    font-family: "Vazirmatn", sans-serif; /* فونت دلخواه شما */
+    font-size: 12px; /* سایز فونت */
+}
+
+/* استایل برای کادر جستجو */
+.select2-container .select2-selection--single {
+    height: 38px; /* ارتفاع کادر */
+
+}
+
+/* استایل برای دکمه حذف */
+.select2-container .select2-selection__clear {
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 14px;
+}
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    top: 80px;
+    right: 100px; /* تنظیم موقعیت به راست */
+    z-index: 1000;
+    margin-right: 100px; /* فاصله از حاشیه راست */
+    width: 300px; /* عرض مناسب برای پیام‌ها */
+    text-align: center;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 12px 20px; /* فضای داخلی بیشتر برای خوانایی */
+    border-radius: 8px; /* لبه‌های گردتر */
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    font-size: 12px;
+    font-family: "Vazirmatn", sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* سایه نرم‌تر */
+}
+
+.message.success {
+    background-color: #d4edda; /* سبز ملایم‌تر */
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da; /* قرمز ملایم‌تر */
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message.info {
+    background-color: #d1ecf1; /* آبی ملایم */
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.message.warning {
+    background-color: #fff3cd; /* زرد ملایم */
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.message.fade-out {
+    opacity: 0;
+    transform: translateY(-20px); /* حرکت به بالا هنگام محو شدن */
+}
+
+/* آیکون داخل پیام */
+.message i {
+    margin-right: 10px; /* فاصله بین آیکون و متن */
+    font-size: 16px; /* اندازه مناسب آیکون */
+    vertical-align: middle; /* هم‌تراز کردن آیکون با متن */
+}

@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'reports/css/buyraw_diagram_weight_dailyprice.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    .date-form-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 20px 0;
+    }
+    .date-form {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .date-form input[type="text"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-family: 'IRANSans';
+        width: 150px;
+        text-align: center;
+    }
+    .date-form label {
+        font-family: 'IRANSans';
+        white-space: nowrap;
+    }
+    .btn-primary {
+        padding: 8px 16px;
+        margin: 0;
+    }
+    .chart-container {
+        margin: 20px 0;
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+    .chart-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'IRANSans';
+        font-size: 18px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="main-content">
+    <br>
+    <h2 class="main-title" style="text-align: center">نمودار میانگین وزنی قیمت خرید و فروش طلا</h2>
+
+    <!-- فرم انتخاب بازه تاریخ -->
+    <div class="date-form-container">
+        <form method="get" class="date-form">
+            <label for="start_date">از تاریخ:</label>
+            <input type="text" id="start_date" name="start_date" value="{{ purchase_data.start_date|date:'Y/m/d' }}" data-jdp>
+
+            <label for="end_date">تا تاریخ:</label>
+            <input type="text" id="end_date" name="end_date" value="{{ purchase_data.end_date|date:'Y/m/d' }}" data-jdp>
+
+            <button type="submit" class="btn btn-primary">نمایش نمودار</button>
+        </form>
+    </div>
+
+    <div class="chart-wrapper">
+        <!-- نمودار خرید -->
+        <div class="chart-container">
+            <h3 class="chart-title">نمودار میانگین وزنی قیمت خرید</h3>
+            {% if purchase_data.labels|length == 0 %}
+                <p style="color: red; text-align: center;">برای بازه انتخاب‌شده داده‌ای یافت نشد.</p>
+            {% else %}
+                <canvas id="purchaseChart"></canvas>
+                {{ purchase_data.labels|json_script:"purchase-labels" }}
+                {{ purchase_data.data|json_script:"purchase-data" }}
+            {% endif %}
+        </div>
+
+        <!-- نمودار فروش -->
+        <div class="chart-container">
+            <br>
+            <h3 class="chart-title">نمودار میانگین وزنی قیمت فروش</h3>
+            {% if sale_data.labels|length == 0 %}
+                <p style="color: red; text-align: center;">برای بازه انتخاب‌شده داده‌ای یافت نشد.</p>
+            {% else %}
+                <canvas id="saleChart"></canvas>
+                {{ sale_data.labels|json_script:"sale-labels" }}
+                {{ sale_data.data|json_script:"sale-data" }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+<script src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // فعال‌سازی تقویم شمسی برای ورودی تاریخ‌ها
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        showTime: false,
+        dateFormat: "YYYY/MM/DD",
+        autoClose: true,
+        position: "auto",
+        showTodayBtn: true,
+        showEmptyBtn: true,
+        container: 'body',
+        selector: '[data-jdp]',
+        monthPicker: {
+            enabled: true
+        },
+        yearPicker: {
+            enabled: true
+        },
+        onSelect: function() {
+            // اعتبارسنجی تاریخ‌ها
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+
+            if (startDate && endDate) {
+                const start = new Date(startDate.replace(/\//g, '-'));
+                const end = new Date(endDate.replace(/\//g, '-'));
+
+                if (start > end) {
+                    alert('تاریخ شروع باید قبل از تاریخ پایان باشد');
+                    document.getElementById('start_date').value = '';
+                    document.getElementById('end_date').value = '';
+                }
+            }
+        }
+    });
+
+    // تنظیمات مشترک برای هر دو نمودار
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            zoom: {
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                    modifierKey: 'ctrl',
+                },
+                zoom: {
+                    wheel: {
+                        enabled: true,
+                    },
+                    pinch: {
+                        enabled: true
+                    },
+                    mode: 'x',
+                    drag: {
+                        enabled: true,
+                        backgroundColor: 'rgba(75,192,192,0.1)'
+                    }
+                }
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleColor: 'white',
+                titleFont: {
+                    family: 'IRANSans',
+                    size: 14
+                },
+                bodyColor: 'white',
+                bodyFont: {
+                    family: 'IRANSans',
+                    size: 13
+                },
+                padding: 10,
+                displayColors: false,
+                callbacks: {
+                    title: function(tooltipItems) {
+                        return 'تاریخ: ' + tooltipItems[0].label;
+                    },
+                    label: function(context) {
+                        return `قیمت: ${context.parsed.y.toLocaleString()} تومان`;
+                    }
+                }
+            },
+            legend: {
+                labels: {
+                    font: {
+                        family: 'IRANSans',
+                        size: 14
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'تاریخ',
+                    font: {
+                        family: 'IRANSans',
+                        size: 14
+                    }
+                },
+                ticks: {
+                    font: {
+                        family: 'IRANSans',
+                        size: 12
+                    }
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'قیمت (تومان)',
+                    font: {
+                        family: 'IRANSans',
+                        size: 14
+                    }
+                },
+                ticks: {
+                    font: {
+                        family: 'IRANSans',
+                        size: 12
+                    },
+                    callback: function(value) {
+                        return value.toLocaleString();
+                    }
+                }
+            }
+        }
+    };
+
+    // ایجاد نمودار خرید
+    const purchaseLabelsTag = document.getElementById('purchase-labels');
+    const purchaseDataTag = document.getElementById('purchase-data');
+    if (purchaseLabelsTag && purchaseDataTag) {
+        const purchaseLabels = JSON.parse(purchaseLabelsTag.textContent);
+        const purchaseData = JSON.parse(purchaseDataTag.textContent);
+
+        const purchaseCtx = document.getElementById('purchaseChart').getContext('2d');
+        new Chart(purchaseCtx, {
+            type: 'line',
+            data: {
+                labels: purchaseLabels,
+                datasets: [{
+                    label: 'میانگین وزنی قیمت خرید (تومان)',
+                    data: purchaseData,
+                    borderColor: '#a16016',
+                    backgroundColor: 'rgba(161, 96, 22, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: commonOptions
+        });
+    }
+
+    // ایجاد نمودار فروش
+    const saleLabelsTag = document.getElementById('sale-labels');
+    const saleDataTag = document.getElementById('sale-data');
+    if (saleLabelsTag && saleDataTag) {
+        const saleLabels = JSON.parse(saleLabelsTag.textContent);
+        const saleData = JSON.parse(saleDataTag.textContent);
+
+        const saleCtx = document.getElementById('saleChart').getContext('2d');
+        new Chart(saleCtx, {
+            type: 'line',
+            data: {
+                labels: saleLabels,
+                datasets: [{
+                    label: 'میانگین وزنی قیمت فروش (تومان)',
+                    data: saleData,
+                    borderColor: '#1d9a71',
+                    backgroundColor: 'rgba(29, 154, 113, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: commonOptions
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'meltvitrin/css/sale_invoice_melt_detail.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="invoice-details">
+        <p><strong>مشتری:</strong> {{ invoice.customer }}</p>
+        <p><strong>تاریخ فاکتور:</strong> {{ invoice.sale_date|date:"Y/m/d" }}</p>
+        <p><strong>نرخ روز طلا:</strong> {{ invoice.sale_dailyprice|intcomma:False }} تومان</p>
+        <p><strong>مبلغ فاکتور:</strong> {{ invoice.total_sale_price|intcomma:False }} تومان</p>
+        <p><strong>تخفیف:</strong> {{ invoice.discount|intcomma:False }} تومان</p>
+    </div>
+
+    <div class="table-container2">
+        <table class="table2">
+            <thead>
+                <tr>
+                    <th>نام قطعه</th>
+                    <th>کد</th>
+                    <th>نوع قطعه</th>
+                    <th>وزن</th>
+                    <th>وزن قطعه</th>
+                    <th>عیار قطعه</th>
+                    <th>اجرت فروش</th>
+                    <th>قیمت</th>
+                    <th>تصویر</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for piece in meltpieces %}
+                <tr>
+                    <td>{{ piece.name }}</td>
+                    <td>{{ piece.code }}</td>
+                    <td>آبشده</td>
+                    <td>{{ piece.net_weight }}</td>
+                    <td>{{ piece.weight }}</td>
+                    <td>{{ piece.karat }}</td>
+                    <td>{{ piece.sale_ojrat }}</td>
+                    <td>{{ piece.sale_price|intcomma:False }}</td>
+                    <td>
+                        {% if piece.image %}
+                            <img src="{{ piece.image.url }}" alt="{{ piece.name }}" width="50" height="50">
+                        {% else %}
+                            <span>بدون تصویر</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="button-container">
+        <a href="{% url 'meltvitrin:sale_invoice_melt_list' %}" class="btn btn-primary">بازگشت</a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'meltvitrin/js/sale_invoice_melt_detail.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        onSelect: function () {
+            this.setAttribute('value', this.value);
+        }
+    });
+</script>
+{% endblock %}

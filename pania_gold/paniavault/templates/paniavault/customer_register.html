@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'paniavault/css/customer_register.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    {% if messages %}
+        <ul class="messages"> <!-- کلاس اضافه شد -->
+            {% for message in messages %}
+                <li class="{% if message.tags %}{{ message.tags }}{% endif %}" style="color: red; font-weight: bold;">
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        <form id="customer-type-form">
+
+            <select id="customer_type" name="customer_type" onchange="showForm()">
+                <option value="" {% if not customer_type %}selected{% endif %}>... نوع مشتری را انتخاب کنید ...</option>
+                <option value="individual" {% if customer_type == "individual" %}selected{% endif %}>مشتری حقیقی</option>
+                <option value="company" {% if customer_type == "company" %}selected{% endif %}>شرکت</option>
+            </select>
+        </form>
+    </form>
+
+    <div id="customer-form-container">
+        {% if form %}
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">ثبت مشتری</button>
+            </form>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'paniavault/js/customer_register.js' %}"></script>
+<script>
+    function showForm() {
+        const customerType = document.getElementById('customer_type').value;
+        const formContainer = document.getElementById('customer-form-container');
+        if (customerType) {
+            window.location.href = `?customer_type=${customerType}`;
+        }
+    }
+
+    // حذف پیام‌ها بعد از 5 ثانیه
+    setTimeout(function() {
+        var messages = document.querySelector('.messages'); // انتخاب لیست پیام‌ها
+        if (messages) {
+            messages.style.transition = "opacity 0.5s ease";
+            messages.style.opacity = "0"; // محو شدن پیام
+            setTimeout(function() {
+                messages.remove(); // حذف پیام از DOM
+            }, 500); // صبر برای تکمیل محو شدن
+        }
+    }, 5000); // 5 ثانیه انتظار
+</script>
+{% endblock %}

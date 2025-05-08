@@ -1,0 +1,139 @@
+/* عمومی */
+body {
+    font-family: 'IRANSans', Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* عنوان صفحه */
+.container {
+    text-align: center;
+    margin: 20px 0;
+    color: #4CAF50;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* استایل جدول‌ها */
+table {
+    width: 60%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* جدول ولت */
+table.vault {
+    background-color: #e8f5e9; /* پس‌زمینه سبز روشن */
+    margin-top: 50px;
+}
+
+/* سرستون جدول ولت */
+table.vault thead {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* سلول‌ها */
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ردیف‌های داده */
+table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tbody tr:hover {
+    background-color: #d1e7dd;
+    transition: background-color 0.3s ease;
+}
+
+/* پیام خالی بودن جدول */
+table tbody tr td[colspan="3"] {
+    text-align: center;
+    font-style: italic;
+    color: #999;
+}
+
+
+/* لینک‌ها و آیکون‌ها */
+a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* دکمه‌ها */
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* واکنش‌گرا برای موبایل */
+@media (max-width: 768px) {
+    table, ul {
+        width: 100%;
+    }
+
+    table th, table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    ul li {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px auto;
+    direction: rtl; /* راست‌چین کردن */
+    text-align: right;
+    font-family: "Vazirmatn", sans-serif;
+}
+
+ul li {
+    font-size: 14px; /* اندازه فونت */
+    color: #000; /* رنگ متن مشکی */
+    margin-bottom: 10px;
+    display: flex;
+    margin-right: 700px;
+    align-items: center;
+
+}
+
+ul li span.label {
+    font-weight: bold;
+    color: #000; /* رنگ لیبل مشکی */
+}
+
+ul li span.value {
+    font-weight: bold;
+    color: #000; /* رنگ مقدار مشکی */
+}

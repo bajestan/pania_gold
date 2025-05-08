@@ -1,0 +1,123 @@
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'assets/css/slidebar.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% endblock %}
+
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سایدبار با زیرمنو کشویی</title>
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 20px"><i class="fa fa-fw fa-users"></i></a>
+                <ul class="submenu-items">
+                <li><a href="{% url 'paniavault:customer_register' %}"> ثبت مشتری</a></li>
+                <li><a href="{% url 'paniavault:supplier_register' %}"> ثبت تامین کننده</a></li>
+                </ul>
+            </li>
+
+
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 14px">تامین خام</a>
+                <ul class="submenu-items">
+                <li><a href="{% url 'paniavault:buyraw_invoice_register' %}">ثبت خام</a></li>
+                    <li><a href="{% url 'paniavault:buyraw_invoice_list' %}">لیست خام</a></li>
+                </ul>
+            </li>
+
+
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 14px">تامین زینتی</a>
+                <ul class="submenu-items">
+                    <li><a href="{% url 'paniavault:create_recipt_craft_invoice' %}">ثبت زینتی</a></li>
+                    <li><a href="{% url 'paniavault:recipt_craft_invoice_list' %}">لیست زینتی</a></li>
+                </ul>
+            </li>
+
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 14px">تامین مستعمل</a>
+                <ul class="submenu-items">
+                  <li><a href="{% url 'vitrin:register_old_piece' %}">ثبت مستعمل</a></li>
+                    <li><a href="{% url 'vitrin:buy_oldpiece_list' %}">لیست مستعمل</a></li>
+                </ul>
+            </li>
+
+
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 14px">تامین قیچی</a>
+                <ul class="submenu-items">
+                    <li><a href="{% url 'paniavault:buyscrap_invoice_register' %}">ثبت قیچی</a></li>
+                    <li><a href="{% url 'paniavault:buyscrap_invoice_list' %}">لیست قیچی</a></li>
+                </ul>
+            </li>
+
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 14px">تامین آبشده</a>
+                <ul class="submenu-items">
+                 <li><a href="{% url 'paniavault:recipt_melt_invoice_list' %}">لیست آبشده</a></li>
+                </ul>
+            </li>
+
+
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 14px">فروش زینتی</a>
+                <ul class="submenu-items">
+                    <li><a href="{% url 'vitrin:vitrin_list' %}"  style="font-size: 36px"><i class="fas fa-store"></i></i></a></li>
+                   <li class="submenu">
+                        <a href="{% url 'vitrin:create_sale_invoice' %}" style="font-size: 36px">
+                            <span id="cart-count">{{ cart_count }}</span>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="submenu">
+                <a href="#" class="submenu-toggle" style="font-size: 14px">فروش آبشده</a>
+                <ul class="submenu-items">
+                    <li><a href="{% url 'meltvitrin:meltvitrin_list' %}" style="font-size: 18px">
+                    <i class="fas fa-store" style="color: #dec21d;"></i></a></li>
+                    <li class="submenu">
+                        <a href="{% url 'meltvitrin:create_sale_melt_invoice' %}" style="font-size: 40px;">
+                            <span id="cart-count">{{ cart_count }}</span>
+                            <i class="fa-solid fa-cart-shopping" style="color: #dec21d;"></i>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+
+    <script>
+        // جاوااسکریپت برای تغییر وضعیت زیرمنوها
+        document.querySelectorAll('.submenu-toggle').forEach(item => {
+            item.addEventListener('click', event => {
+                event.preventDefault();
+
+                // بستن زیرمنوهای دیگر
+                const allSubmenus = document.querySelectorAll('.submenu-items');
+                allSubmenus.forEach(submenu => {
+                    if (submenu !== item.nextElementSibling) {
+                        submenu.classList.remove('open');
+                    }
+                });
+
+                // باز و بسته کردن زیرمنو فعلی
+                let submenu = item.nextElementSibling;
+                submenu.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>

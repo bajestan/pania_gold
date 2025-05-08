@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'paniavault/css/recipt_melt_invoice_list.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+{% block body %}
+<div class="supplers">
+    <h4>لیست فاکتورهای دریافت آبشده</h4>
+    <form method="GET" class="filter-form">
+      <div class="form-group">
+        <input type="text" data-jdp name="end_date" placeholder="تاریخ پایان" autocomplete="off" value="{{ filters.end_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" data-jdp name="start_date" placeholder="تاریخ شروع" autocomplete="off" value="{{ filters.start_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" name="supply_name" placeholder="تامین کننده" value="{{ filters.supply_name|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+
+        <button type="submit" class="filter-button">جستجو</button>
+        <a href="{% url 'paniavault:recipt_melt_invoice_list' %}?clear_filters=1" class="reset-button">
+            <i class="fas fa-trash"></i>
+    </a>
+    </form>
+
+
+    <h5 style="margin-left: 550px">لیست فاکتورهای تامین آبشده</h5>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px">ردیف</th>
+                    <th style="width:100px">تامین کننده</th>
+                    <th style="width:70px">سریال فاکتور</th>
+                    <th style="width:70px">تاریخ تحویل</th>
+                    <th style="width:70px">وزن کل آبشده</th>
+                    <th style="width:70px">ثبت قطعه</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td style="width:40px">{{ forloop.revcounter }}</td>
+                    <td style="width:100px">{{ invoice.supplier }}</td>
+                    <td style="width:70px">{{ invoice.invoice_serial }}</td>
+                    <td style="width:70px">{{ invoice.invoice_date|date:"Y/m/d" }}</td>
+                    <td style="width:70px">{{ invoice.net_weight }}</td>
+                    <td style="width:70px; text-align: center;">
+                    <!-- آیکون ثبت قطعه با لینک به صفحه ثبت قطعه برای هر فاکتور -->
+                    <a href="{% url 'paniavault:register_melt_piece' invoice.id %}">
+                        <i class="fas fa-plus-circle" style="font-size: 20px; color: #28a745;"></i>
+                    </a>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="6">هیچ فاکتوری یافت نشد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td style="width: 40px"></td>
+                    <td style="width: 100px">جمع</td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 70px">{{ all_net_weight|intcomma:False }}</td>
+                    <td style="width: 70px"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'paniavault/js/recipt_melt_invoice_list.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        onSelect: function () {
+            this.setAttribute('value', this.value);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,190 @@
+/* General Styles */
+body {
+    font-family: "Vazirmatn", sans-serif;
+    background-color: #f8f6cd;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 20px auto;
+    padding: 15px;
+    max-width: 700px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Messages */
+.messages {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #f5c2c7;
+    background-color: #f8d7da;
+    color: #842029;
+    border-radius: 5px;
+}
+
+.message.error {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.message.error i {
+    color: #842029;
+}
+
+/* Titles */
+h4 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+    margin-top: 50px;
+}
+
+/* Table Styles */
+.table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.table th, .table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+}
+
+.table th {
+    background-color: #d9d6d6;
+    border: 1px solid #f5f3f3;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.table td img.thumbnail {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+
+}
+
+
+
+.form-group {
+    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* تنظیمات فیلدهای ورودی */
+input, textarea, select {
+    width: 300px; /* عرض ثابت */
+    padding: 5px; /* کاهش فضای داخلی از 15px به 10px برای تنظیم بهتر */
+    height: 35px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 5px; /* افزایش فاصله عمودی برای نمای بهتر */
+    font-size: 14px;
+    font-family: "Vazirmatn", sans-serif; /* اطمینان از استفاده از فونت */
+}
+
+
+
+
+/* Buttons */
+.btn-danger {
+    border: none;
+    color: #c53333;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    color: #f6f5f5;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    #invoice-form-container {
+        padding: 10px;
+    }
+
+    .btn-danger, .btn-success {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
+/* استایل برای دکمه‌ها */
+button {
+    font-family: "Vazirmatn", sans-serif; /* فونت فارسی */
+    border-radius: 5px; /* گوشه‌های گرد */
+    cursor: pointer; /* نشانگر ماوس */
+    text-align: center; /* تراز متن در مرکز */
+    transition: background-color 0.3s ease; /* انیمیشن تغییر رنگ پس‌زمینه */
+    border: 1px solid transparent; /* حاشیه دکمه */
+    padding: 8px 10px; /* کاهش ارتفاع دکمه */
+    font-size: 14px; /* اندازه متن */
+}
+
+/* استایل دکمه ثبت */
+.btn-submit {
+    width: 180px; /* عرض دکمه ثبت */
+    background-color: #28a745; /* رنگ سبز */
+    color: #fff; /* رنگ متن */
+    border-color: #28a745; /* رنگ حاشیه */
+}
+
+.btn-submit:hover {
+    background-color: #218838; /* رنگ سبز تیره هنگام هاور */
+    border-color: #218838; /* رنگ حاشیه هنگام هاور */
+}
+
+/* استایل دکمه بازگشت */
+.btn-back {
+    width: 100px; /* عرض دکمه بازگشت */
+    background-color: #0d5094; /* رنگ پس‌زمینه */
+    color: #fff; /* رنگ متن */
+    border-color: #0d5094; /* رنگ حاشیه */
+    text-decoration: none; /* حذف خط زیر متن */
+    border-radius: 5px;
+    text-align: center;
+    padding: 8px 10px; /* کاهش ارتفاع دکمه */
+    font-size: 14px;
+}
+
+.btn-back:hover {
+    background-color: #0864de; /* رنگ پس‌زمینه تیره‌تر هنگام هاور */
+    border-color: #0864de; /* رنگ حاشیه هنگام هاور */
+}
+
+/* کانتینر برای دکمه‌ها */
+.button-container {
+    display: flex; /* استفاده از فِلِکس‌باکس */
+    gap: 10px; /* فاصله بین دکمه‌ها */
+    justify-content: center; /* تراز کردن دکمه‌ها در مرکز */
+    margin-top: 5px; /* فاصله از بالای کادر */
+}
+
+
+.text-center {
+    display: flex;
+    justify-content: center; /* مرکز افقی */
+    align-items: center; /* مرکز عمودی */
+    text-align: center; /* مرکز کردن متن */
+
+}

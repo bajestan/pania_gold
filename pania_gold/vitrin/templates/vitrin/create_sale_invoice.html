@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="{% static 'vitrin/css/create_sale_invoice.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/select2.min.css' %}" />
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        <ul class="message error">
+            {% for message in messages %}
+                <li class="message {{ message.tags }}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <h4 style="text-align: center">فاکتور فروش زینتی و مستعمل</h4>
+    <div class="container2">
+        {% if request.session.sale_cart %}
+            <table class="table table-bordered table-striped" id="cart-table">
+                <thead>
+                    <tr>
+                        <th>کد کالا</th>
+                        <th>نام کالا</th>
+                        <th>وزن (گرم)</th>
+                        <th>اجرت</th>
+                        <th>اجرت ریالی</th>
+                        <th>تصویر</th>
+                        <th>قیمت (تومان)</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in request.session.sale_cart %}
+                        <tr data-id="{{ item.id }}" data-type="{{ item.type }}">
+                            <td>{{ item.code }}</td>
+                            <td>{{ item.name }}</td>
+                            <td class="net-weight">{{ item.net_weight }}</td>
+                            <td class="sale-ojrat">{{ item.sale_ojrat }}</td>
+                            <td class="sale-price_ojrat">{{ item.sale_price_ojrat|intcomma:False }}</td>
+                            <td>
+                                {% if item.image %}
+                                    <img src="{{ item.image }}" alt="{{ item.name }}" width="50" height="50" class="thumbnail">
+                                {% else %}
+                                    <span>بدون تصویر</span>
+                                {% endif %}
+                            </td>
+                           <td>
+                               <input type="hidden" name="sale_prices[]" class="sale-price-hidden" value="{{ item.sale_price|default:0 }}">
+                               <span class="sale-price">{% if item.sale_price %}{{ item.sale_price|intcomma }}{% else %}0{% endif %}</span>
+                            </td>
+
+                            <td>
+                                <form method="POST" action="{% url 'vitrin:remove_from_invoice' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="piece_id" value="{{ item.id }}">
+                                    <input type="hidden" name="piece_type" value="{{ item.type }}">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center;">هنوز کالایی به سبد اضافه نشده است.</p>
+        {% endif %}
+    </div>
+
+    <h5 class="text-center" id="total-sale-price">جمع فاکتور: ۰</h5>
+
+    <div id="invoice-form-container">
+        {% if form %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.sale_dailyprice }}
+                {{ form.customer }}
+                {{ form.companyseller }}
+                {{ form.sale_date }}
+                {{ form.sale_price }}
+                {{ form.discount }}
+                {{ form.net_sale_price }}
+                {{ form.invoice_serial }}
+                {{ form.notes }}
+            </div>
+            <div class="button-container">
+                <a href="{% url 'vitrin:vitrin_list' %}" class="btn btn-primary btn-back">ویترین</a>
+                <button type="submit" class="btn btn-primary btn-submit">ثبت</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'vitrin/js/create_sale_invoice.js' %}"></script>
+<script src="{% static 'assets/js/select2.min.js' %}"></script>
+<script src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+
+
+{% endblock %}

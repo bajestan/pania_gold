@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'meltvitrin/css/sale_meltpiece_list.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+{% block body %}
+<div class="supplers">
+    <h4>لیست فروش آبشده ها</h4>
+    <form method="GET" class="filter-form">
+     <div class="form-group">
+        <input type="text" data-jdp name="end_date" placeholder="تا تاریخ" autocomplete="off" value="{{ filters.end_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" data-jdp name="start_date" placeholder="از تاریخ" autocomplete="off" value="{{ filters.start_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" name="customer" placeholder="مشتری" value="{{ filters.customer|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" name="companyseller" placeholder="فروشنده" value="{{ filters.companyseller|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 11px;">
+    </div>
+    <a href="{% url 'meltvitrin:sale_meltpiece_list' %}?clear_filters=1" class="reset-button">
+        <i class="fas fa-trash"></i>
+    </a>
+    <button type="submit" class="filter-button">جستجو</button>
+
+    </form>
+    <h5 style="margin-left: 550px">لیست فروش آبشده ها</h5>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px">ردیف</th>
+                    <th style="width:120px">مشتری</th>
+                    <th style="width:70px">تاریخ فروش</th>
+                    <th style="width:60px">فروشنده</th>
+                    <th style="width:130px">نام کالا</th>
+                    <th style="width:90px">کد کالا</th>
+                    <th style="width:70px">وزن</th>
+                    <th style="width:50px">اجرت فروش</th>
+                    <th style="width:80px">نرخ روز فروش</th>
+                    <th style="width:70px">قیمت فروش</th>
+                    <th style="width:70px">تصویر</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for piece in sale_piece %}
+                <tr>
+                    <td style="width:40px">{{ forloop.revcounter }}</td>
+                    <td style="width:120px">{{ piece.sale_invoice.customer }}</td>
+                    <td style="width:70px">{{ piece.sale_invoice.sale_date|date:"Y/m/d" }}</td>
+                    <td style="width:60px">
+                        {% if piece.sale_invoice.companyseller %}
+                            {{ piece.sale_invoice.companyseller.name }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
+
+                    <td style="width:130px">{{ piece.name }}</td>
+                    <td style="width:90px">{{ piece.code }}</td>
+                    <td style="width:70px">{{ piece.net_weight }}</td>
+                    <td style="width:50px">{{ piece.sale_ojrat }}</td>
+                    <td style="width:80px">{{ piece.sale_invoice.sale_dailyprice|intcomma:False }}</td>
+                    <td style="width:70px">{{ piece.sale_price|intcomma:False }}</td>
+                    <td style="width:70px">
+                        {% if piece.image %}
+                            <img src="{{ piece.image.url }}" alt="{{ piece.name }}" width="30" height="30" style="object-fit: cover;">
+                        {% else %}
+                            بدون تصویر
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">هیچ فاکتوری یافت نشد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'meltvitrin/js/sale_meltpiece_list.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        onSelect: function () {
+            this.setAttribute('value', this.value);
+        }
+    });
+</script>
+{% endblock %}

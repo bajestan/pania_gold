@@ -1,0 +1,212 @@
+/* استایل کلی جدول */
+.table-container {
+    margin-top: 30px;
+    margin-left: 200px;
+    white-space: nowrap;
+    padding: 3px;
+    display: flex; /* استفاده از Flexbox برای هم‌راستا کردن جداول */
+    justify-content: flex-start; /* تنظیم جداول به سمت چپ */
+    gap: 20px; /* فاصله بین جداول */
+}
+
+/* استایل کلی جدول */
+table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+/* تنظیمات ستون‌های جدول */
+thead, tfoot {
+    display: table;
+    table-layout: fixed;
+    background-color: #bd782a;  /* پس‌زمینه سبز برای هدر و فوتر */
+    color: white;
+}
+
+/* بدنه جدول با اسکرول عمودی */
+tbody {
+    display: block;
+    max-height: 250px;  /* حداکثر ارتفاع برای بدنه جدول */
+    overflow-y: scroll;  /* فعال‌سازی اسکرول عمودی */
+}
+
+/* اسکرول مستقل برای بدنه جدول */
+tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+
+/* استایل‌های ردیف‌ها */
+thead th {
+    border: 1px solid #dcdcdc;
+    text-align: center;
+    font-size: 11px;
+    padding: 5px;
+}
+
+tfoot td {
+    text-align: center;
+    border: 1px solid #1878ab;
+    font-size: 11px;
+    padding: 5px;
+}
+
+tbody td {
+    border: 1px solid #dcdcdc;
+    text-align: center;
+    font-size: 11px;
+    padding: 5px;
+}
+
+/* رنگ متناوب برای ردیف‌های بدنه */
+tbody tr:nth-child(even) {
+    background-color: #d5d2d2;
+}
+
+/* استایل فیلتر فرم */
+.filter-form {
+    width: 30%;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-left: 400px;
+    padding: 5px;
+    background-color: #e8e8ea;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.filter-form .form-group {
+    margin-right: 10px;
+}
+
+.filter-form input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    height: 15px;
+    font-size: 14px;
+    color: #96420c;
+    font-weight: bold;
+}
+
+.filter-button {
+    padding: 4px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: "Vazirmatn", sans-serif;
+    height: 25px;
+}
+
+.filter-button:hover {
+    background-color: #2980b9;
+}
+
+
+/* استایل‌های دکمه و لینک‌های پاکسازی فیلتر */
+.reset-button {
+    text-decoration: none;
+    font-size: 14px;
+    color: #e74c3c;
+    cursor: pointer;
+}
+
+.reset-button:hover {
+    color: #c0392b;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(۱۹۶, ۱۹۴, ۱۹۴, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #d0cece;
+    width: 60%;
+    text-align: right;
+    font-family: Vazirmatn, sans-serif;
+    font-size: 14px;
+}
+
+.close-button {
+    color: #aaa;
+    float: left;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+/* استایل فیلتر فرم */
+.filter-form {
+    width: 60%;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-left: 230px;
+    padding: 5px;
+    background-color: #f6f6f8;
+    border: 1px solid #e7e4e4;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.filter-form .form-group {
+    margin-right: 10px;
+}
+
+.filter-form input {
+    padding: 5px;
+    border: 1px solid #ece6e6;
+    border-radius: 4px;
+    width: 100px;
+    height: 15px;
+    font-size: 12px;
+}
+
+.filter-button {
+    padding: 4px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: "Vazirmatn", sans-serif;
+     height: 25px;
+}
+
+.filter-button:hover {
+    background-color: #2980b9;
+}
+.red-text {
+    color: #a45b14;
+}
+.green-text{
+    color: #68a223;
+}

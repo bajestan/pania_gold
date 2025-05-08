@@ -1,0 +1,143 @@
+/* برای مرکز کردن body در صفحه */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* ارتفاع کامل صفحه */
+    margin-top: 30px;
+}
+
+/* استایل کلی برای کانتینر */
+.container {
+    padding: 20px;
+    width: 800px;
+    margin: 0 auto; /* مرکز کردن افقی */
+    background-color: #f9f9fc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+/*===========================================*/
+.invoice-details {
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* مرکز کردن در محور افقی */
+    justify-content: center; /* مرکز کردن در محور عمودی */
+    height: 20vh;
+    text-align: center;
+    margin-top: 40px;
+}
+
+
+
+/*======================================*/
+
+h2 {
+    margin-bottom: 10px;
+}
+
+p {
+    margin: 5px 0;
+}
+
+/*======================================*/
+
+/* استایل برای جدول */
+.table-container2 {
+    width: 100%; /* تنظیم عرض جدول برای واکنش‌گرایی */
+    max-width: 800px; /* محدود کردن عرض به 800px */
+    margin-top: 40px;
+    border: 1px solid #aeaeb0;
+    border-radius: 5px;
+    overflow-x: auto; /* افزودن اسکرول افقی در صورت نیاز */
+}
+
+.table2 {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    border: 1px solid #aeaeb0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.table2 th,
+.table2 td {
+    border: 1px solid #aeaeb0;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.table2 th {
+    background-color: #7baaf5;
+    color: #fff;
+}
+
+/* استایل برای دکمه */
+.button-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #0b3585;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0864de;
+}
+
+
+/* استایل برای جدول */
+.table-container3 {
+    margin-top: 40px;
+    border: 1px solid #aeaeb0;
+     border-radius: 5px;
+    overflow-x: auto; /* افزودن اسکرول افقی در صورت نیاز */
+}
+
+.table3 {
+    width: 100%;
+    border-collapse: collapse; /* حذف فاصله بین سلول‌ها */
+    margin-bottom: 10px;
+    border: 1px solid #aeaeb0; /* خط مرزی برای جدول */
+    border-radius: 5px; /* گوشه‌های گرد */
+    overflow: hidden; /* برای گوشه‌های گرد */
+}
+
+.table3 th,
+.table3 td {
+    border: 1px solid #aeaeb0; /* حاشیه ضخیم‌تر برای سلول‌ها */
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.table3 th {
+    background-color: #e5c049; /* رنگ پس‌زمینه برای هدر */
+    color: #fff;
+}
+
+.table3 td {
+    background-color: #fff; /* رنگ پس‌زمینه برای سلول‌های عادی */
+}
+
+.table3 tr:nth-child(even) td {
+    background-color: #efeeee; /* رنگ زمینه برای ردیف‌های زوج */
+}
+
+.table3 tr:hover {
+    background-color: #e9ecef; /* تغییر رنگ پس‌زمینه در حالت هاور */
+}
+/*====================================*/

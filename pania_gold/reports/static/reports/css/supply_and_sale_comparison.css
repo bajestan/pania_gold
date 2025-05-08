@@ -1,0 +1,164 @@
+.table-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 20px;
+  width: 80%;
+    margin-left: 50px;
+  box-sizing: border-box;
+
+}
+
+.table-wrapper {
+  flex: 1 1 400px;
+  box-sizing: border-box;
+  border: 1px solid #8c8c8c;
+  border-radius: 8px;
+  padding: 10px;
+  width: 80%;
+
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+thead, tfoot {
+  background-color: #a16016;
+  color: white;
+}
+
+thead, tfoot, tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+tbody {
+  display: block;
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+thead th, tbody td {
+  border: 1px solid #dcdcdc;
+  text-align: center;
+  font-size: 11px;
+  padding: 5px;
+}
+
+tfoot td {
+  border: 1px solid #bd782a;
+  text-align: center;
+  font-size: 13px;
+  padding: 5px;
+}
+
+.sale-table thead,
+.sale-table tfoot {
+  background-color: #1d9a71;
+  color: white;
+}
+
+.sale-table tfoot td {
+  border: 1px solid #1d9a71;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f5f1f1;
+}
+
+/* Placeholderهای فیلتر */
+input[data-jdp]::placeholder,
+input[name="customer"]::placeholder,
+input[name="companyseller"]::placeholder {
+  color: #cbc9c9;
+  font-family: Vazirmatn, sans-serif;
+  font-size: 12px;
+}
+
+/* فرم فیلتر */
+.filter-form {
+  width: 30%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-left: 400px;
+  padding: 5px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.filter-form .form-group {
+  margin-right: 10px;
+}
+
+.filter-form input {
+  padding: 5px;
+  border: 1px solid #f1f0f0;
+  border-radius: 4px;
+  width: 100px;
+  height: 15px;
+  font-size: 13px;
+  color: #bb3c14;
+  font-weight: bold;
+}
+
+/* دکمه فیلتر */
+.filter-button {
+  padding: 4px 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: "Vazirmatn", sans-serif;
+  height: 25px;
+}
+
+.filter-button:hover {
+  background-color: #2980b9;
+}
+
+/* فیلتر نوع طلا */
+.gold-type-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.gold-type-filters label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.gold-type-filters input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #3498db;
+  cursor: pointer;
+}
+
+/* دکمه پاکسازی فیلتر */
+.reset-button {
+  text-decoration: none;
+  font-size: 14px;
+  color: #e74c3c;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  color: #c039
+}

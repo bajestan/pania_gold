@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'meltvitrin/css/sale_invoice_melt_list.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+{% block body %}
+<div class="supplers">
+    <h4> فاکتورهای فروش آبشده</h4>
+    {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} custom-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <style>
+            .custom-alert {
+                color: #d8000c; /* متن قرمز تیره */
+                padding: 10px;
+                margin: 10px 0 10px 400px; /* فاصله از بالا، پایین و چپ */
+                border-radius: 5px;
+            }
+        </style>
+
+
+    <form method="GET" class="filter-form">
+     <div class="form-group">
+        <input type="text" data-jdp name="end_date" placeholder="تا تاریخ" autocomplete="off" value="{{ filters.end_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" data-jdp name="start_date" placeholder="از تاریخ" autocomplete="off" value="{{ filters.start_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" name="customer" placeholder="مشتری" value="{{ filters.customer|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" name="companyseller" placeholder="فروشنده" value="{{ filters.companyseller|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 11px;">
+    </div>
+    <a href="{% url 'meltvitrin:sale_invoice_melt_list' %}?clear_filters=1" class="reset-button">
+        <i class="fas fa-trash"></i>
+    </a>
+    <button type="submit" class="filter-button">جستجو</button>
+
+    </form>
+    <h5 style="margin-left: 550px"> فاکتورهای فروش آبشده</h5>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px">ردیف</th>
+                    <th style="width:100px">مشتری</th>
+                    <th style="width:70px">تاریخ فاکتور</th>
+                    <th style="width:60px">فروشنده</th>
+                    <th style="width:70px">نرخ روز طلا</th>
+                    <th style="width:70px">مبلغ فاکتور</th>
+                    <th style="width:70px">تخفیف</th>
+                    <th style="width: 40px"> ثبت مالی</th>
+                    <th style="width: 70px">پرداخت مشتری</th>
+                    <th style="width: 30px"> فاکتور</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td style="width:40px">{{ forloop.revcounter }}</td>
+                    <td style="width:100px">{{ invoice.customer }}</td>
+                    <td style="width:70px">{{ invoice.sale_date|date:"Y/m/d" }}</td>
+                    <td style="width:60px">
+                        {% if invoice.companyseller %}
+                            {{ invoice.companyseller.name }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
+                    <td style="width:70px">{{ invoice.sale_dailyprice|intcomma:False }}</td>
+                    <td style="width:70px">{{ invoice.total_sale_price|intcomma:False }}</td>
+                    <td style="width:70px">{{ invoice.discount|intcomma:False }}</td>
+                    <td style="width: 40px">
+                        <a href="{% url 'finance:add_meltsale_invoice_payment' invoice.id %}">
+                            <i class="fas fa-credit-card" style="color: #E67E22;"></i>
+                        </a>
+                    </td>
+                    <td style="width:70px">{{ invoice.total_paid|intcomma:False }}</td>
+                    <td style="width: 30px">
+                        <a href="{% url 'meltvitrin:sale_invoice_melt_detail' invoice.id %}">
+                            <i class="fas fa-file-alt"></i>
+                        </a>
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">هیچ فاکتوری یافت نشد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td style="width: 40px"></td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 60px"></td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 70px">{{ all_sale_price|intcomma:False }}</td>
+                    <td style="width: 70px">{{ all_discount|intcomma:False }}</td>
+                    <td style="width: 40px"></td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 40px"></td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'meltvitrin/js/sale_invoice_melt_list.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        onSelect: function () {
+            this.setAttribute('value', this.value);
+        }
+    });
+</script>
+{% endblock %}

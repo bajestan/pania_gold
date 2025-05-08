@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/select2.min.css' %}" />
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}" />
+<link rel="stylesheet" href="{% static 'paniavault/css/create_recipt_craft_invoice.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+
+
+{% block body %}
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        <ul class="message error">
+            {% for message in messages %}
+                <li class="message {{ message.tags }}">
+                    <i class="fas fa-exclamation-circle"></i> <!-- آیکون برای خطا -->
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <h5 style="text-align: center">ثبت فاکتور دریافت زینتی</h5>
+    <div id="invoice-form-container">
+        <form id="recipt-craft-invoice-form" method="post">
+            {% csrf_token %}
+            <!-- فرم اصلی -->
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <!-- دکمه ثبت -->
+            <button type="submit" class="btn btn-success">ثبت</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'assets/js/select2.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script src="{% static 'paniavault/js/create_recipt_craft_invoice.js' %}"></script>
+
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr"
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "انتخاب تامین کننده",
+            allowClear: true
+        });
+    });
+</script>
+{% endblock %}

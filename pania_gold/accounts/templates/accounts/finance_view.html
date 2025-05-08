@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/finance_view.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<h2>صفحه ثبت مالی</h2>
+<div class="image-container">
+    {% if home_image %}
+        <img src="{{ home_image.image.url }}" alt="Home Image">
+    {% endif %}
+</div>
+
+</div>
+
+<div class="grid-container">
+
+
+    <div class="grid-item">
+        <a href="{{ sale_invoice_list }}" class="no-underline">
+            <div class="icon-box">
+                <i class="fas fa-shopping-cart"></i> <!-- آیکون سفارش -->
+            </div>
+            <h3>ثبت پرداخت فروش زینتی</h3>
+        </a>
+    </div>
+
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'accounts/js/finance_view.js' %}"></script>
+{% endblock %}

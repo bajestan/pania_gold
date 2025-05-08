@@ -1,0 +1,219 @@
+/* استایل کلی جدول */
+.table-container {
+    margin-top: 30px;
+    margin-left: 30px;
+    white-space: nowrap;
+    padding: 3px;
+    display: flex; /* استفاده از Flexbox برای هم‌راستا کردن جداول */
+    justify-content: flex-start; /* تنظیم جداول به سمت چپ */
+    gap: 20px; /* فاصله بین جداول */
+}
+
+/* استایل کلی جدول */
+table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+/* تنظیمات ستون‌های جدول */
+thead{
+    display: table;
+    table-layout: fixed;
+    border: 1px solid #a197da;
+    background-color: #7262cc;  /* پس‌زمینه سبز برای هدر و فوتر */
+    color: white;
+    height: 35px;
+}
+tfoot {
+    display: table;
+    table-layout: fixed;
+    background-color: #616dcb;  /* پس‌زمینه سبز برای هدر و فوتر */
+    color: white;
+    height: 30px;
+    font-size: 13px;
+}
+
+/* بدنه جدول با اسکرول عمودی */
+tbody {
+    display: block;
+    max-height: 250px;  /* حداکثر ارتفاع برای بدنه جدول */
+    overflow-y: scroll;  /* فعال‌سازی اسکرول عمودی */
+}
+
+/* اسکرول مستقل برای بدنه جدول */
+tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+
+/* استایل‌های ردیف‌ها */
+thead th,tbody td {
+    border: 1px solid #dcdcdc;
+    text-align: center;
+    font-size: 11px;
+    padding: 5px;
+}
+tfoot td{
+    border: 1px solid #616dcb;
+    text-align: center;
+    font-size: 11px;
+    padding: 5px;
+}
+
+/* رنگ متناوب برای ردیف‌های بدنه */
+tbody tr:nth-child(even) {
+    background-color: #dad8d8;
+}
+
+input[data-jdp]::placeholder {
+    color: #abaaaa; /* یا هر رنگ دلخواه مثل #a45b14 */
+    font-family: Vazirmatn, sans-serif;
+    font-size: 12px;
+}
+
+
+/* رنگ و فونت placeholder برای فیلتر مشتری */
+input[name="customer"]::placeholder {
+    color: #b6b3b3;
+    font-family: Vazirmatn, sans-serif;
+    font-size: 12px;
+}
+
+/* رنگ و فونت placeholder برای فیلتر فروشنده */
+input[name="companyseller"]::placeholder {
+    color: #a8a7a7;
+    font-family: Vazirmatn, sans-serif;
+    font-size: 12px;
+}
+
+/* استایل فیلتر فرم */
+.filter-form {
+    width: 60%;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-left: 200px;
+    padding: 5px;
+    background-color: #d5d4d4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.filter-form .form-group {
+    margin-right: 10px;
+}
+
+.filter-form input {
+    padding: 5px;
+    border: 1px solid #f1f0f0;
+    border-radius: 4px;
+    width: 100px;
+    height: 15px;
+    font-size: 13px;
+    color: #bb3c14;
+    font-weight: bold;
+}
+
+
+
+
+/* استایل دکمه فیلتر */
+.filter-button {
+    padding: 4px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: "Vazirmatn", sans-serif;
+    height: 25px;
+}
+
+.filter-button:hover {
+    background-color: #2980b9;
+}
+/* استایل چک‌باکس‌های فیلتر نوع طلا */
+.gold-type-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-family: "Vazirmatn", sans-serif;
+}
+
+.gold-type-filters label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.gold-type-filters input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #3498db; /* تغییر رنگ تیک چک‌باکس */
+    cursor: pointer;
+}
+/* استایل‌های دکمه و لینک‌های پاکسازی فیلتر */
+.reset-button {
+    text-decoration: none;
+    font-size: 14px;
+    color: #e74c3c;
+    cursor: pointer;
+}
+
+.reset-button:hover {
+    color: #c0392b;
+}
+
+/* استایل مودال */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(۱۹۶, ۱۹۴, ۱۹۴, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #d0cece;
+    width: 60%;
+    text-align: right;
+    font-family: Vazirmatn, sans-serif;
+    font-size: 14px;
+}
+
+.close-button {
+    color: #aaa;
+    float: left;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* رنگ‌های متن */
+.red-text {
+    color: #a45b14;
+}
+
+.green-text {
+    color: #68a223;
+}

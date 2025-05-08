@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'vitrin/css/buy_oldpiece_list.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+{% block body %}
+<div class="supplers">
+    <h4>لیست خریدهای مستعمل</h4>
+    <form method="GET" class="filter-form">
+    <div class="form-group">
+        <input type="text" data-jdp name="end_date" placeholder="تاریخ پایان" autocomplete="off"
+               value="{{ filters.end_date|default_if_none:'' }}"
+               style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" data-jdp name="start_date" placeholder="تاریخ شروع" autocomplete="off"
+               value="{{ filters.start_date|default_if_none:'' }}"
+               style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+    <div class="form-group">
+        <input type="text" name="supply" placeholder="تأمین‌کننده"
+               value="{{ filters.supply|default_if_none:'' }}"
+               style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+    </div>
+
+    <a href="{% url 'vitrin:buy_oldpiece_list' %}?clear_filters=1" class="reset-button">
+        <i class="fas fa-trash"></i>
+    </a>
+    <button type="submit" class="filter-button">جستجو</button>
+</form>
+
+
+    <h5 style="margin-left: 550px">لیست خریدهای مستعمل</h5>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px">ردیف</th>
+                    <th style="width:100px">تامین کننده</th>
+                    <th style="width:70px">کد قطعه</th>
+                    <th style="width:70px">تاریخ خرید</th>
+                    <th style="width:70px">وزن خالص</th>
+                    <th style="width:70px">وزن با متعلقات</th>
+                    <th style="width:70px">نرخ روز خرید</th>
+                    <th style="width:70px">قیمت خرید</th>
+                    <th style="width:60px">اجرت فروش</th>
+                    <th style="width:70px">اجرت ریالی فرو</th>
+                    <th style="width: 60px"> ثبت پرداخت</th>
+                    <th style="width: 70px">مانده پرداخت</th>
+                    <th style="width: 40px"> فاکتور</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td style="width:40px">{{ forloop.revcounter }}</td>
+                    <td style="width:100px">{{ invoice.supplier }}</td>
+                    <td style="width:70px">{{ invoice.code }}</td>
+                    <td style="width:70px">{{ invoice.buy_date|date:"Y/m/d" }}</td>
+                    <td style="width:70px">{{ invoice.net_weight }}</td>
+                    <td style="width:70px">{{ invoice.weight_with_accessory }}</td>
+                    <td style="width:70px">{{ invoice.buy_dailyprice|intcomma:False }}</td>
+                    <td style="width:70px">{{ invoice.buy_price|intcomma:False }}</td>
+                    <td style="width:60px">{{ invoice.sale_ojrat }}</td>
+                    <td style="width:70px">{{ invoice.sale_price_ojrat }}</td>
+                    <td style="width: 60px">
+                        <a href="{% url 'finance:add_buyoldpiece_payment' invoice.id %}">
+                            <i class="fas fa-credit-card" style="color: #E67E22;"></i>
+                        </a>
+                    </td>
+                    <td style="width: 70px">{{ invoice.remaining|intcomma:False }}</td>
+                    <td style="width: 40px">
+                        <a href="{% url 'vitrin:buy_oldpiece_detail' invoice.id %}">
+                            <i class="fas fa-file-alt"></i>
+                        </a>
+                    </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                    <td colspan="6">هیچ فاکتوری یافت نشد</td>
+                     </tr>
+
+                    {% endfor %}
+
+            </tbody>
+             <tfoot>
+                <tr class="total-row">
+                    <td style="width: 40px"></td>
+                    <td style="width: 100px">جمع</td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 70px">{{ total_weight|intcomma:False }}</td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 70px"> avg {{ weighted_avg_daily_price|intcomma:False }}</td>
+                    <td style="width: 70px">{{  total_price|intcomma:False }}</td>
+                    <td style="width: 60px"></td>
+                    <td style="width: 70px"></td>
+                    <td style="width: 60px"></td>
+                    <td style="width: 70px">{{ total_remaining|intcomma:False }}</td>
+                    <td style="width: 40px"></td>
+
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'vitrin/js/buy_oldpiece_list.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        onSelect: function () {
+            this.setAttribute('value', this.value);
+        }
+    });
+</script>
+
+{% endblock %}

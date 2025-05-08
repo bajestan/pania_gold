@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/select2.min.css' %}" />
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}" />
+<link rel="stylesheet" href="{% static 'paniavault/css/register_craft_piece.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="content-wrapper" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div id="invoice-form-container" style="width: 45%;">
+            <h4 style="display: flex; justify-content: center; align-items: center;">
+                <span style="margin-right: 20px;color: #96420c">
+                    {{ invoice.supplier.first_name }} {{ invoice.supplier.last_name }}
+                </span>
+                ثبت قطعه زینتی فاکتور
+            </h4>
+            <form id="recipt-craft-invoice-form" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                <div class="button-container">
+                    <a href="{% url 'paniavault:recipt_craft_invoice_list' %}" class="btn btn-primary btn-back">بازگشت</a>
+                    <button type="submit" class="btn btn-primary btn-submit">ثبت</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container" style="width: 50%; height: 100%; overflow-y: auto; border: 1px solid #ddd; padding: 5px; display: flex; flex-direction: column;">
+            {% if pieces %}
+            <a href="{% url 'paniavault:download_craft_pieces_excel' invoice.id %}" class="btn btn-success" style="margin-bottom: 15px;">
+                <i class="fas fa-download"></i>
+            </a>
+            <div class="table-wrapper" style="flex-grow: 1; overflow-y: auto; max-height: 400px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">ردیف</th>
+                            <th style="width:30px">وزن</th>
+                            <th style="width:60px">اجرت فروش</th>
+                            <th style="width:120px">نام</th>
+                            <th style="width:100px">کد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for piece in pieces reversed %}
+                        <tr>
+                            <td style="width:30px">{{ forloop.revcounter }}</td>
+                            <td style="width:30px">{{ piece.net_weight }}</td>
+                            <td style="width:60px">{{ piece.sale_ojrat }}</td>
+                            <td style="width:120px">{{ piece.name }}</td>
+                            <td style="width:100px">{{ piece.code }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">هیچ قطعه‌ای ثبت نشده است.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block js %}
+<script src="{% static 'paniavault/js/register_craft_piece.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/select2.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'assets/js/select2.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "دسته بندی",
+            allowClear: true
+        });
+    });
+</script>
+<script>
+    // حذف پیام‌ها بعد از 5 ثانیه
+    setTimeout(function() {
+        var messages = document.querySelector('.messages');
+        if (messages) {
+            messages.style.transition = "opacity 0.5s ease";
+            messages.style.opacity = "0"; // محو شدن پیام
+            setTimeout(function() {
+                messages.remove(); // حذف پیام از DOM
+            }, 500); // صبر برای تکمیل محو شدن
+        }
+    }, 5000); // 5 ثانیه انتظار
+</script>
+{% endblock %}

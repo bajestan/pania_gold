@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'vitrin/css/sale_piece_list.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="supplers">
+    <h4>لیست فروش زینتی و مستعمل</h4>
+    <form method="GET" class="filter-form">
+        <div class="form-group">
+            <input type="text" data-jdp name="end_date" placeholder="تا تاریخ" autocomplete="off" value="{{ filters.end_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+        </div>
+        <div class="form-group">
+            <input type="text" data-jdp name="start_date" placeholder="از تاریخ" autocomplete="off" value="{{ filters.start_date|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+        </div>
+        <div class="form-group">
+            <input type="text" name="customer" placeholder="مشتری" value="{{ filters.customer|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 12px;">
+        </div>
+        <div class="form-group">
+            <input type="text" name="companyseller" placeholder="فروشنده" value="{{ filters.companyseller|default_if_none:'' }}" style="font-family: Vazirmatn, sans-serif; font-size: 11px;">
+        </div>
+       <!-- فیلتر نوع طلا -->
+        <div class="gold-type-filters">
+            <label>
+                <input type="checkbox" name="gold_type" value="craft"
+                       {% if 'craft' in gold_type %}checked{% endif %}>
+                زینتی
+            </label>
+
+            <label>
+                <input type="checkbox" name="gold_type" value="old"
+                       {% if 'old' in gold_type %}checked{% endif %}>
+                مستعمل
+            </label>
+        </div>
+
+
+
+        <a href="{% url 'vitrin:sale_piece_list' %}?clear_filters=1" class="reset-button">
+            <i class="fas fa-trash"></i>
+        </a>
+        <button type="submit" class="filter-button">جستجو</button>
+    </form>
+
+    <h5 style="margin-left: 550px">لیست فروش کالاهای زینتی و مستعمل</h5>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px">ردیف</th>
+                    <th style="width:120px">مشتری</th>
+                    <th style="width:60px">تاریخ فروش</th>
+                    <th style="width:60px">فروشنده</th>
+                    <th style="width:130px">نام کالا</th>
+                    <th style="width:80px">کد کالا</th>
+                    <th style="width:40px">اجرت خ</th>
+                    <th style="width:40px">اجرت ف</th>
+                    <th style="width:50px">سودسلر</th>
+                    <th style="width:60px">وزن خالص</th>
+                    <th style="width:60px">سود ریالی</th>
+                    <th style="width:50px">سود وزنی</th>
+                    <th style="width:50px">درصدسود</th>
+                    <th style="width:70px">نرخ روز فروش</th>
+                    <th style="width:50px">تصویر</th>
+                    <th style="width:40px">نوع قطعه</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pieces %}
+                <tr>
+                    <td style="width:40px">{{ forloop.revcounter }}</td>
+                    <td style="width:120px">{{ item.piece.sale_invoice.customer }}</td>
+                    <td style="width:60px">{{ item.piece.sale_invoice.sale_date|date:"Y/m/d" }}</td>
+                    <td style="width:60px">
+                        {% if item.piece.sale_invoice.companyseller %}
+                            {{ item.piece.sale_invoice.companyseller.name }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
+                    <td style="width:130px">{{ item.piece.name }}</td>
+                    <td style="width:80px">{{ item.piece.code }}</td>
+                    <td style="width:40px">{{ item.piece.buy_ojrat|floatformat:1 }}</td>
+                    <td style="width:40px">{{ item.piece.sale_ojrat|floatformat:1 }}</td>
+                    <td style="width:50px">{{ item.piece.seller_profit_percent|floatformat:1}}</td>
+                    <td style="width:60px">{{ item.piece.net_weight }}</td>
+                    <td style="width:60px">{{ item.rial_profit|intcomma:False }}</td>
+                    <td style="width:50px">{{ item.profit_value|floatformat:2 }}</td>
+                    <td style="width:50px">{{ item.percent_profit|floatformat:1 }} %</td>
+                    <td style="width:70px">{{ item.piece.sale_invoice.sale_dailyprice|intcomma:False }}</td>
+                    <td style="width:50px">
+                        {% if item.piece.image %}
+                            <img src="{{ item.piece.image.url }}" alt="{{ item.piece.name }}" width="40" height="40" style="object-fit: cover;">
+                        {% else %}
+                            بدون تصویر
+                        {% endif %}
+                    </td>
+                    <td style="width:40px">
+                        {% if item.type == 'old' %}
+                            مستعمل
+                        {% elif item.type == 'craft' %}
+                            زینتی
+                        {% else %}
+                            --
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="12">هیچ فاکتوری یافت نشد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td style="width: 40px">{{total_piece_count}} تعداد</td>
+                    <td style="width: 120px"></td>
+                    <td style="width: 60px"></td>
+                    <td style="width: 60px"></td>
+                    <td style="width: 130px"></td>
+                    <td style="width: 80px"></td>
+                    <td style="width: 40px"></td>
+                    <td style="width: 40px"></td>
+                    <td style="width: 50px"></td>
+                    <td style="width: 60px">{{ total_net_weight|intcomma:False }} gr</td>
+                    <td style="width: 60px"></td>
+                    <td style="width: 50px">{{total_profit_value}} gr</td>
+                    <td style="width: 50px">{{ total_profit_percentage|floatformat:1 }} %</td>
+                    <td style="width: 70px">avg {{ weighted_avg_dailyprice|intcomma:False }}</td>
+                    <td style="width: 50px"></td>
+                    <td style="width: 40px"></td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'vitrin/js/sale_piece_list.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        onSelect: function () {
+            this.setAttribute('value', this.value);
+        }
+    });
+</script>
+{% endblock %}

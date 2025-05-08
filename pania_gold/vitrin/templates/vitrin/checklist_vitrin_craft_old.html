@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+{% load custom_filters %}
+
+
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/css/jalalidatepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'vitrin/css/checklist_vitrin_craft_old.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+{% block body %}
+
+<div class="supplers">
+
+    <h4>موجودی زینتی و مستعمل ویترین</h4>
+      {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} custom-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <style>
+            .custom-alert {
+                color: #d8000c; /* متن قرمز تیره */
+                padding: 10px;
+                margin: 10px 0 10px 400px; /* فاصله از بالا، پایین و چپ */
+                border-radius: 5px;
+            }
+        </style>
+
+    <!-- فرم فیلتر -->
+    <form method="GET" class="filter-form">
+        <div style="position: relative; display: inline-block;">
+            <input
+                    type="text"
+                    name="name"
+                    placeholder="نام کالا"
+                    value="{{ filters.name|default_if_none:'' }}"
+                    style="font-family: Vazirmatn, sans-serif; font-size: 12px; padding-left: 30px;">
+            <i
+                    class="fas fa-search"
+                    style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: gray; font-size: 14px;">
+            </i>
+        </div>
+
+        <div style="position: relative; display: inline-block;">
+            <input
+                    type="text"
+                    name="code"
+                    placeholder="کد کالا"
+                    value="{{ filters.code|default_if_none:'' }}"
+                    style="font-family: Vazirmatn, sans-serif; font-size: 12px; padding-left: 30px;">
+            <i
+                    class="fas fa-search"
+                    style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: gray; font-size: 14px;">
+            </i>
+        </div>
+
+        <!-- فیلتر نوع طلا -->
+        <div class="gold-type-filters">
+            <label>
+                <input type="checkbox" name="gold_type" value="craft"
+                       {% if 'craft' in gold_type %}checked{% endif %}>
+                مستعمل
+            </label>
+
+            <label>
+                <input type="checkbox" name="gold_type" value="old"
+                       {% if 'old' in gold_type %}checked{% endif %}>
+                زینتی
+            </label>
+
+        </div>
+
+        <a href="{% url 'vitrin:checklist_vitrin_craft_old' %}?clear_filters=1" class="reset-button">
+            <i class="fas fa-trash"></i>
+        </a>
+        <button type="submit" class="filter-button">جستجو</button>
+    </form>
+
+
+
+
+    <h5 style="margin-left: 550px">موجودی ویترین (زینتی و مستعمل) </h5>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th style="width:40px">ردیف</th>
+                <th style="width:60px">نوع</th>
+                <th style="width:90px">کد کالا</th>
+                <th style="width:150px">نام کالا</th>
+                <th style="width:60px">وزن خالص</th>
+                <th style="width:60px">اجرت خرید</th>
+                <th style="width:90px">تامین کننده</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for piece in selected_pieces %}
+            <tr>
+                <td style="width:40px">{{ forloop.revcounter }}</td>
+                <td style="width:60px">
+                    {% if piece|instanceof:"CraftPiece" %}
+                        زینتی
+                    {% else %}
+                        مستعمل
+                    {% endif %}
+
+                </td>
+                <td style="width:90px">{{ piece.code }}</td>
+                <td style="width:150px">{{ piece.name }}</td>
+                <td style="width:60px">{{ piece.net_weight }}</td>
+                <td style="width:60px">{{ piece.buy_ojrat }}</td>
+                <td style="width:90px">{{ piece.supplier.first_name }} {{ piece.supplier.last_name }}</td>
+
+            </tr>
+            {% endfor %}
+            {% if selected_pieces|length == 0 %}
+            <tr>
+                <td colspan="8">هیچ کالایی یافت نشد</td>
+            </tr>
+            {% endif %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td style="width:40px"></td>
+                <td style="width:60px"></td>
+                <td style="width:90px"></td>
+                <td style="width:150px"></td>
+                <td style="width:60px">{{ total_weight }}</td>
+                <td style="width:60px">{{ total_craft_ojrat_weight }}</td>
+                <td style="width:90px"></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'vitrin/js/checklist_vitrin_craft_old.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/jalalidatepicker.min.js' %}"></script>
+<script>
+    jalaliDatepicker.startWatch({
+        minDate: "attr",
+        maxDate: "attr",
+        onSelect: function () {
+            this.setAttribute('value', this.value);
+        }
+    });
+</script>
+{% endblock %}

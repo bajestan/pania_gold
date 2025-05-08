@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+{% load humanize %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/home.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
+<link rel="stylesheet" href="{% static 'assets/css/all.min.css' %}">
+
+{% endblock %}
+
+{% block body %}
+<h2>صفحه خانه</h2>
+<div class="image-container">
+    {% if home_image %}
+        <img src="{{ home_image.image.url }}" alt="Home Image">
+    {% endif %}
+</div>
+
+</div>
+
+<div class="grid-container">
+
+
+    <div class="grid-item">
+        <a href="{{ raw_view }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.buyraw_invoice_register }}" alt=" طلای خام" width="70" height="70">
+            </div>
+            <h4>طلای خام</h4>
+        </a>
+    </div>
+
+    <div class="grid-item">
+        <a href="{{ scrap_view }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.buyscrap_invoice_register }}" alt=" طلای قیچی" width="70" height="70">
+            </div>
+            <h4> طلای قیچی</h4>
+        </a>
+    </div>
+
+    <div class="grid-item">
+        <a href="{{ old_view }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.register_old_piece }}" alt=" مستعمل" width="70" height="70">
+            </div>
+            <h4> مستعمل</h4>
+        </a>
+    </div>
+
+
+
+    <div class="grid-item">
+        <a href="{{ craft_view }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.create_recipt_craft_invoice }}" alt="  زینتی" width="70" height="70">
+            </div>
+            <h4> زینتی</h4>
+        </a>
+    </div>
+
+    <div class="grid-item">
+        <a href="{{ melt_view }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.create_recipt_melt_invoice }}" alt=" آبشده" width="70" height="70">
+            </div>
+            <h4>آبشده</h4>
+        </a>
+    </div>
+
+    <div class="grid-item">
+        <a href="{{  vitrin_view  }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.vitrin_view }}" alt="ویترین" width="70" height="70">
+            </div>
+            <h4>ویترین</h4>
+        </a>
+    </div>
+
+
+    <div class="grid-item">
+        <a href="{{ finance_view }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.finance_view }}" alt="ثبت مالی" width="70" height="70">
+            </div>
+            <h4>ثبت مالی</h4>
+        </a>
+    </div>
+
+    <div class="grid-item">
+        <a href="{{ report_view }}" class="no-underline">
+            <div class="image-box">
+                <img src="{{ MEDIA_URL }}{{ images.report_view }}" alt="گزارشات" width="70" height="70">
+            </div>
+            <h4>گزارشات</h4>
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'accounts/js/home.js' %}"></script>
+{% endblock %}
