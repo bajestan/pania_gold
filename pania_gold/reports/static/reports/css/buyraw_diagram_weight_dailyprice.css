@@ -47,3 +47,50 @@ button:hover {
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
+    .date-form-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 20px 0;
+    }
+    .date-form {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .date-form input[type="text"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-family: 'IRANSans';
+        width: 150px;
+        text-align: center;
+    }
+    .date-form label {
+        font-family: 'IRANSans';
+        white-space: nowrap;
+    }
+    .btn-primary {
+        padding: 8px 16px;
+        margin: 0;
+    }
+    .chart-container {
+        margin: 20px 0;
+        position: relative;
+        height: 500px;
+        width: 100%;
+    }
+    .chart-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'IRANSans';
+        font-size: 18px;
+    }
+
+
+    .main-content {
+        margin-right: 220px;
+        max-width: 1200px;
+        padding: 20px;
+    }

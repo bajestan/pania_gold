@@ -27,13 +27,13 @@
         </a>
         <button type="submit" class="filter-button">جستجو</button>
     </form>
-    <h5 style="margin-left: 550px">مقایسه تامین و فروش گالری </h5>
+    <h5 style="margin-left: 550px">مقایسه تامین وفروش</h5>
 
 
     <div class="table-container" style="display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
     <!-- جدول تأمین -->
     <div class="table-wrapper" style="border: 1px solid #ccc; border-radius: 8px; padding: 10px;">
-        <h5 style="text-align: center;">تأمین گالری(خرید خام - قیچی - مستعمل)</h5>
+        <h5 style="text-align: center;">تأمین (خرید خام و قیچی)</h5>
         <table>
             <thead>
                 <tr>
@@ -47,7 +47,7 @@
             <tbody>
                 {% for item in supply_data %}
                     <tr>
-                        <td style="width:70px">{{ item.date|date:"Y/m/d" }}</td>
+                        <td style="width:70px">{{ item.date|jformat:"%Y/%m/%d" }}</td>
                         <td style="width:50px">{{ item.type }}</td>
                         <td style="width:50px">{{ item.weight }}</td>
                         <td style="width:70px">{{ item.price|intcomma:False }}</td>
@@ -71,7 +71,7 @@
 
     <!-- جدول فروش -->
     <div class="table-wrapper" style=" border: 1px solid #ccc; border-radius: 8px; padding: 10px;">
-        <h5 style="text-align: center;"> فروش گالری</h5>
+        <h5 style="text-align: center;">فروش</h5>
         <table class="sale-table">
             <thead>
                 <tr>
@@ -85,16 +85,8 @@
             <tbody>
                 {% for item in sale_data %}
                     <tr>
-                        <td style="width:70px">{{ item.date|date:"Y/m/d" }}</td>
-                        <td style="width:50px">
-                            {% if item.type == 'old' %}
-                                مستعمل
-                            {% elif item.type == 'craft' %}
-                                زینتی
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
+                        <td style="width:70px">{{ item.date|jformat:"%Y/%m/%d" }}</td>
+                        <td style="width:50px"></td>
                         <td style="width:50px">{{ item.weight }}</td>
                         <td style="width:70px">{{ item.price|intcomma:False }}</td>
                         <td style="width:70px">{{ item.dailyprice|intcomma:False }}</td>
@@ -115,7 +107,7 @@
         </table>
     </div>
 </div>
-
+</div>
 {% endblock %}
 
 {% block js %}
@@ -130,4 +122,4 @@
         }
     });
 </script>
-{% endblock %}
+{% endblock js%}

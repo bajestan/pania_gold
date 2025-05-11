@@ -7,53 +7,13 @@
 <link rel="stylesheet" href="{% static 'reports/css/buyraw_diagram_weight_dailyprice.css' %}">
 <link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-    .date-form-container {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        margin: 20px 0;
-    }
-    .date-form {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .date-form input[type="text"] {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-family: 'IRANSans';
-        width: 150px;
-        text-align: center;
-    }
-    .date-form label {
-        font-family: 'IRANSans';
-        white-space: nowrap;
-    }
-    .btn-primary {
-        padding: 8px 16px;
-        margin: 0;
-    }
-    .chart-container {
-        margin: 20px 0;
-        position: relative;
-        height: 400px;
-        width: 100%;
-    }
-    .chart-title {
-        text-align: center;
-        margin-bottom: 20px;
-        font-family: 'IRANSans';
-        font-size: 18px;
-    }
-</style>
+
 {% endblock %}
 
 {% block body %}
 <div class="main-content">
-    <br>
-    <h2 class="main-title" style="text-align: center">نمودار میانگین وزنی قیمت خرید و فروش طلا</h2>
+<br>
+    <h2 class="main-title">نمودار میانگین وزنی قیمت خرید و فروش طلا</h2>
 
     <!-- فرم انتخاب بازه تاریخ -->
     <div class="date-form-container">
@@ -69,26 +29,16 @@
     </div>
 
     <div class="chart-wrapper">
-        <!-- نمودار خرید -->
         <div class="chart-container">
-            <h3 class="chart-title">نمودار میانگین وزنی قیمت خرید</h3>
-            {% if purchase_data.labels|length == 0 %}
+            <h3 class="chart-title">نمودار میانگین وزنی قیمت خرید و فروش</h3>
+            {% if purchase_data.labels|length == 0 and sale_data.labels|length == 0 %}
                 <p style="color: red; text-align: center;">برای بازه انتخاب‌شده داده‌ای یافت نشد.</p>
             {% else %}
-                <canvas id="purchaseChart"></canvas>
+                <div class="chart-canvas-container">
+                    <canvas id="combinedChart"></canvas>
+                </div>
                 {{ purchase_data.labels|json_script:"purchase-labels" }}
                 {{ purchase_data.data|json_script:"purchase-data" }}
-            {% endif %}
-        </div>
-
-        <!-- نمودار فروش -->
-        <div class="chart-container">
-            <br>
-            <h3 class="chart-title">نمودار میانگین وزنی قیمت فروش</h3>
-            {% if sale_data.labels|length == 0 %}
-                <p style="color: red; text-align: center;">برای بازه انتخاب‌شده داده‌ای یافت نشد.</p>
-            {% else %}
-                <canvas id="saleChart"></canvas>
                 {{ sale_data.labels|json_script:"sale-labels" }}
                 {{ sale_data.data|json_script:"sale-data" }}
             {% endif %}
@@ -140,10 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // تنظیمات مشترک برای هر دو نمودار
+    // تنظیمات مشترک برای نمودار
     const commonOptions = {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         plugins: {
             zoom: {
                 pan: {
@@ -180,13 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     size: 13
                 },
                 padding: 10,
-                displayColors: false,
+                displayColors: true,
                 callbacks: {
                     title: function(tooltipItems) {
                         return 'تاریخ: ' + tooltipItems[0].label;
                     },
                     label: function(context) {
-                        return `قیمت: ${context.parsed.y.toLocaleString()} تومان`;
+                        return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} تومان`;
                     }
                 }
             },
@@ -238,55 +188,45 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // ایجاد نمودار خرید
+    // ایجاد نمودار ترکیبی
     const purchaseLabelsTag = document.getElementById('purchase-labels');
     const purchaseDataTag = document.getElementById('purchase-data');
-    if (purchaseLabelsTag && purchaseDataTag) {
-        const purchaseLabels = JSON.parse(purchaseLabelsTag.textContent);
-        const purchaseData = JSON.parse(purchaseDataTag.textContent);
-
-        const purchaseCtx = document.getElementById('purchaseChart').getContext('2d');
-        new Chart(purchaseCtx, {
-            type: 'line',
-            data: {
-                labels: purchaseLabels,
-                datasets: [{
-                    label: 'میانگین وزنی قیمت خرید (تومان)',
-                    data: purchaseData,
-                    borderColor: '#a16016',
-                    backgroundColor: 'rgba(161, 96, 22, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 3,
-                    pointHoverRadius: 6
-                }]
-            },
-            options: commonOptions
-        });
-    }
-
-    // ایجاد نمودار فروش
     const saleLabelsTag = document.getElementById('sale-labels');
     const saleDataTag = document.getElementById('sale-data');
-    if (saleLabelsTag && saleDataTag) {
+
+    if (purchaseLabelsTag && purchaseDataTag && saleLabelsTag && saleDataTag) {
+        const purchaseLabels = JSON.parse(purchaseLabelsTag.textContent);
+        const purchaseData = JSON.parse(purchaseDataTag.textContent);
         const saleLabels = JSON.parse(saleLabelsTag.textContent);
         const saleData = JSON.parse(saleDataTag.textContent);
 
-        const saleCtx = document.getElementById('saleChart').getContext('2d');
-        new Chart(saleCtx, {
+        const combinedCtx = document.getElementById('combinedChart').getContext('2d');
+        new Chart(combinedCtx, {
             type: 'line',
             data: {
-                labels: saleLabels,
-                datasets: [{
-                    label: 'میانگین وزنی قیمت فروش (تومان)',
-                    data: saleData,
-                    borderColor: '#1d9a71',
-                    backgroundColor: 'rgba(29, 154, 113, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 3,
-                    pointHoverRadius: 6
-                }]
+                labels: purchaseLabels,
+                datasets: [
+                    {
+                        label: 'میانگین وزنی قیمت خرید (تومان)',
+                        data: purchaseData,
+                        borderColor: '#a16016',
+                        backgroundColor: 'rgba(161, 96, 22, 0.1)',
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'میانگین وزنی قیمت فروش (تومان)',
+                        data: saleData,
+                        borderColor: '#1d9a71',
+                        backgroundColor: 'rgba(29, 154, 113, 0.1)',
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
+                    }
+                ]
             },
             options: commonOptions
         });

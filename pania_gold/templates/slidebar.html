@@ -5,7 +5,20 @@
 <link rel="stylesheet" href="{% static 'assets/css/slidebar.css' %}">
 <link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+<style>
+    .sidebar {
+        position: fixed;
+        margin-top: -2px;
+        top: 60px;
+        right: 0;
+        width: 180px;
+        height: 100vh;
+        background: #033e6b;
+        overflow-y: auto;
+        z-index: 100;
+        box-sizing: border-box;
+    }
+</style>
 {% endblock %}
 
 <html lang="fa">
