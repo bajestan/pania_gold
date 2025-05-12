@@ -11,26 +11,26 @@
 {% endblock %}
 
 {% block body %}
+<h2></h2>
 <div class="main-content">
 <br>
-    <h2 class="main-title">نمودار میانگین وزنی قیمت خرید و فروش طلا</h2>
+
 
     <!-- فرم انتخاب بازه تاریخ -->
-    <div class="date-form-container">
-        <form method="get" class="date-form">
-            <label for="start_date">از تاریخ:</label>
-            <input type="text" id="start_date" name="start_date" value="{{ purchase_data.start_date|date:'Y/m/d' }}" data-jdp>
+<div class="date-form-wrapper">
+    <form method="GET" class="filter-form">
+        <input type="text" data-jdp name="start_date" placeholder="از تاریخ" autocomplete="off"
+               value="{{ purchase_data.start_date|date:'Y/m/d' }}">
+        <input type="text" data-jdp name="end_date" placeholder="تا تاریخ" autocomplete="off"
+               value="{{ purchase_data.end_date|date:'Y/m/d' }}">
+        <button type="submit" class="btn btn-primary">نمایش نمودار</button>
+    </form>
+</div>
 
-            <label for="end_date">تا تاریخ:</label>
-            <input type="text" id="end_date" name="end_date" value="{{ purchase_data.end_date|date:'Y/m/d' }}" data-jdp>
-
-            <button type="submit" class="btn btn-primary">نمایش نمودار</button>
-        </form>
-    </div>
 
     <div class="chart-wrapper">
         <div class="chart-container">
-            <h3 class="chart-title">نمودار میانگین وزنی قیمت خرید و فروش</h3>
+            <h3 class="chart-title"> نمودار مقایسه ایی میانگین وزنی قیمت تامین و فروش گالری</h3>
             {% if purchase_data.labels|length == 0 and sale_data.labels|length == 0 %}
                 <p style="color: red; text-align: center;">برای بازه انتخاب‌شده داده‌ای یافت نشد.</p>
             {% else %}

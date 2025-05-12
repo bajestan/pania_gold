@@ -17,6 +17,7 @@ from decimal import Decimal, InvalidOperation
 
 
 def buyraw_diagram_weight_dailyprice(request):
+
     # تاریخ‌های ورودی از فرم
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
@@ -117,10 +118,15 @@ def buyraw_diagram_weight_dailyprice(request):
 
 @login_required
 def supply_and_sale_comparison(request):
-    # دریافت تاریخ‌ها از GET
-    start_date = request.GET.get('start_date', '')
-    end_date = request.GET.get('end_date', '')
+    if request.GET:
+        request.session['supply_and_sale_comparison_filters'] = {
+            'start_date': request.GET.get('start_date', ''),
+            'end_date': request.GET.get('end_date', ''),
+        }
 
+    filters = request.session.get('supply_and_sale_comparison_filters', {})
+    start_date = filters.get('start_date', '')
+    end_date = filters.get('end_date', '')
     start_date_jalali = end_date_jalali = ''
     start_date_gregorian = end_date_gregorian = None
 
@@ -131,34 +137,58 @@ def supply_and_sale_comparison(request):
         end_year, end_month, end_day = map(int, end_date.split('-'))
         start_date_gregorian = jdatetime.date(start_year, start_month, start_day).togregorian()
         end_date_gregorian = jdatetime.date(end_year, end_month, end_day).togregorian()
-        start_date_jalali = start_date
-        end_date_jalali = end_date
+        start_date_jalali = jdatetime.date.fromgregorian(date=start_date_gregorian).strftime('%Y/%m/%d')
+        end_date_jalali = jdatetime.date.fromgregorian(date=end_date_gregorian).strftime('%Y/%m/%d')
 
-    # --- خرید از خام ---
-    buyraw = BuyRawInvoice.objects.all()
+    # --- خرید از خام فقط مخصوص گالری ---
+    buyraw = BuyRawInvoice.objects.filter(supply_type='gallery')
+
     if start_date_gregorian and end_date_gregorian:
         buyraw = buyraw.filter(invoice_date__range=(start_date_gregorian, end_date_gregorian))
+    else:
+        buyraw = buyraw.order_by('-invoice_date')[:5]
 
     raw_data = [{
         'date': invoice.invoice_date,
         'weight': invoice.net_weight,
         'price': invoice.invoice_price,
         'dailyprice': invoice.invoice_dailyprice,
-        'type': 'خام',
+        'type': f"خام -{dict(BuyRawInvoice.SUPPLY_TYPE_CHOICES).get(invoice.supply_type, '')}",
     } for invoice in buyraw]
 
-    # --- خرید از ضایعات ---
+    # --- خرید از قیچی ---
     buyscrap = BuyScrapInvoice.objects.all()
+
     if start_date_gregorian and end_date_gregorian:
-        buyscrap = buyscrap.filter(created_at__range=(start_date_gregorian, end_date_gregorian))
+        buyscrap = buyscrap.filter(invoice_date__range=(start_date_gregorian, end_date_gregorian))
+    else:
+        buyscrap = buyscrap.order_by('-invoice_date')[:5]
 
     scrap_data = [{
-        'date': invoice.created_at,
+        'date': invoice.invoice_date,
         'weight': invoice.net_weight,
         'price': invoice.invoice_price,
         'dailyprice': invoice.invoice_dailyprice,
         'type': 'قیچی',
     } for invoice in buyscrap]
+
+    # ----------- تأمین از مستعمل -------------
+    oldpieces_supply = OldPiece.objects.all()
+
+    if start_date_gregorian and end_date_gregorian:
+        oldpieces_supply = oldpieces_supply.filter(
+            buy_date__range=(start_date_gregorian, end_date_gregorian)
+        )
+    else:
+        oldpieces_supply = oldpieces_supply.order_by('-buy_date')[:5]
+
+    oldpiece_data = [{
+        'date': piece.buy_date,
+        'weight': piece.net_weight,
+        'price': piece.buy_price,
+        'dailyprice': piece.buy_dailyprice,
+        'type': 'مستعمل',
+    } for piece in oldpieces_supply]
 
     # --- فروش ---
     craftpieces = CraftPiece.objects.filter(is_sold=True).select_related('sale_invoice')
@@ -167,6 +197,9 @@ def supply_and_sale_comparison(request):
     if start_date_gregorian and end_date_gregorian:
         craftpieces = craftpieces.filter(sale_invoice__sale_date__range=(start_date_gregorian, end_date_gregorian))
         oldpieces = oldpieces.filter(sale_invoice__sale_date__range=(start_date_gregorian, end_date_gregorian))
+    else:
+        craftpieces = craftpieces.order_by('-sale_date')[:5]
+        oldpieces = oldpieces.order_by('-sale_date')[:5]
 
     sale_data = []
     for piece in list(craftpieces) + list(oldpieces):
@@ -176,6 +209,7 @@ def supply_and_sale_comparison(request):
             'weight': piece.net_weight,
             'price': piece.sale_price,
             'dailyprice': piece.sale_invoice.sale_dailyprice if piece.sale_invoice else None,
+            'type': 'craft' if isinstance(piece, CraftPiece) else 'old',
         })
 
     # --- محاسبه مجموع وزن و میانگین وزنی نرخ روز برای فروش ---
@@ -194,7 +228,11 @@ def supply_and_sale_comparison(request):
     avg_sale_dailyprice = int((weighted_sale_dailyprice_sum / total_sale_weight).quantize(Decimal('0.01'))) if total_sale_weight > 0 else 0
 
     # --- محاسبه مجموع وزن و میانگین وزنی نرخ روز برای تأمین ---
-    supply_data = raw_data + scrap_data
+    supply_data = raw_data + scrap_data + oldpiece_data
+
+    sale_data.sort(key=lambda x: x['date'], reverse=True)
+    supply_data.sort(key=lambda x: x['date'], reverse=True)
+
     total_supply_weight = Decimal('0.00')
     weighted_supply_dailyprice_sum = Decimal('0.00')
     for item in supply_data:
@@ -210,6 +248,7 @@ def supply_and_sale_comparison(request):
     avg_supply_dailyprice = int((weighted_supply_dailyprice_sum / total_supply_weight).quantize(Decimal('0.01'))) if total_supply_weight > 0 else 0
 
     context = {
+        'filters': filters,
         'start_date': start_date_jalali,
         'end_date': end_date_jalali,
         'supply_data': supply_data,
