@@ -17,10 +17,19 @@ from decimal import Decimal, InvalidOperation
 
 
 def buyraw_diagram_weight_dailyprice(request):
+    # Get saved filters from session
+    filters = request.session.get('buyraw_diagram_weight_dailyprice', {})
+    
+    if request.GET:
+        request.session['buyraw_diagram_weight_dailyprice'] = {
+            'start_date': request.GET.get('start_date', ''),
+            'end_date': request.GET.get('end_date', ''),
+        }
+        filters = request.session['buyraw_diagram_weight_dailyprice']
 
     # تاریخ‌های ورودی از فرم
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
+    start_date_str = request.GET.get('start_date') or filters.get('start_date', '')
+    end_date_str = request.GET.get('end_date') or filters.get('end_date', '')
 
     # اگر تاریخ‌ها وجود نداشته باشن، مقدار پیش‌فرض بده
     if not start_date_str or not end_date_str:
@@ -107,8 +116,8 @@ def buyraw_diagram_weight_dailyprice(request):
     context = {
         'purchase_data': purchase_data,
         'sale_data': sale_data,
-        'start_date': start_date,
-        'end_date': end_date,
+        'start_date': start_date_str,
+        'end_date': end_date_str,
     }
 
     return render(request, 'reports/buyraw_diagram_weight_dailyprice.html', context)
