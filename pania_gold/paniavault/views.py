@@ -643,13 +643,19 @@ def recipt_craft_invoice_list(request):
 
 # ------------ثبت خرید قطعه زینتی در فاکتور اصلی ------------------
 
+
+
+
+
+
+
 @login_required
 def register_craft_piece(request, invoice_id):
     invoice = get_object_or_404(ReciptCraftInvoice, id=invoice_id)
     pieces = CraftPiece.objects.filter(invoice=invoice)
     if request.method == 'POST':
         form = CraftPieceForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() :
             gold_type = form.cleaned_data['gold_type']
             sale_ojrat = form.cleaned_data['sale_ojrat']
             net_weight = form.cleaned_data['net_weight']

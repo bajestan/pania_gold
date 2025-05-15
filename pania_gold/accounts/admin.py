@@ -52,7 +52,7 @@ class HomeImageAdmin(admin.ModelAdmin):
 # # ======================= مدیریت فروشندگان ==========================
 @admin.register(CompanySeller)
 class SellerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'mellicode')
+    list_display = ('name','vitrin_name' ,'mellicode')
     search_fields = ('name',)
 
 

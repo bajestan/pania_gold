@@ -193,3 +193,4 @@ class ReciptCraftInvoice(models.Model):
     class Meta:
         verbose_name = 'فاکتور تامین زینتی'
         verbose_name_plural = 'فاکتورهای تامین زینتی'
+

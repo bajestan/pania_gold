@@ -14,6 +14,7 @@ urlpatterns = [
     path('finance/', include('finance.urls', namespace='finance')),
     path('reports/', include('reports.urls', namespace='reports')),
     path('paniaplatform/', include('paniaplatform.urls', namespace='paniaplatform')),
+    path('transfers/', include('transfers.urls', namespace='transfers')),
     path('select2/', include('django_select2.urls')),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \

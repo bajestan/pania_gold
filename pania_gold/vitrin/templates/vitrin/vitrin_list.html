@@ -96,23 +96,24 @@
                 <p class="product-weight">وزن : {{ vitrin_item.piece.net_weight }}</p>
                 <p class="product-weight">اجرت: {{ vitrin_item.piece.sale_ojrat|floatformat:0 }}</p>
 
+
                 <!-- نمایش نوع طلا و آیکون در یک سطر -->
                 <div class="product-type-and-icon">
                     {% if vitrin_item.type == 'craft' %}
-                    <p class="product-weight">زینتی</p>
+                    <p class="product-weight">زینتی </p>
                     <a href="{% url 'vitrin:add_to_invoice' piece_type='craft' piece_id=vitrin_item.piece.id %}"
                        class="add-to-invoice">
                         <i class="fas fa-cart-plus"></i>
                     </a>
                     {% elif vitrin_item.type == 'old' %}
-                    <p class="product-weight">مستعمل</p>
+                    <p class="product-weight">مستعمل </p>
                     <a href="{% url 'vitrin:add_to_invoice' piece_type='old' piece_id=vitrin_item.piece.id %}"
                        class="add-to-invoice">
                         <i class="fas fa-cart-plus"></i>
                     </a>
                     {% endif %}
                 </div>
-
+                <p class="product-weight">ویترین {{ vitrin_item.piece.vitrin.vitrin_type }}</p>
             </div>
         </div>
         {% endfor %}

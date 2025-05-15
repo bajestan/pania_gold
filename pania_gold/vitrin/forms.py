@@ -81,6 +81,7 @@ class CraftPieceForm(forms.ModelForm):
             'notes': '',
         }
 
+
 # -------------------------------------------
 class OldPieceForm(forms.ModelForm):
     class Meta:

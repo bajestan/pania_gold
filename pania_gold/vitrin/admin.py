@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import OldPiece,CraftPiece,SaleInvoice
+from .models import CompanyVitrin
 from django.utils.html import mark_safe
 from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -12,6 +13,18 @@ from django.utils.translation import gettext_lazy as _
 import datetime
 
 
+
+
+
+
+
+@admin.register(CompanyVitrin)
+class CompanyVitrinAdmin(admin.ModelAdmin):
+    list_display = (
+        'vitrin_type', 'vitrin_balance', 'vitrin_ojrat_balance', 'vitrin_assets',
+
+    )
+    search_fields = ['vitrin_type']
 
 
 # ------------فیلتر تاریخ بر اساس تاریخ فاکتور فروش------------
@@ -43,14 +56,16 @@ class SaleDateFilter(SimpleListFilter):
 @admin.register(OldPiece)
 class OldPieceAdmin(admin.ModelAdmin):
     list_display = (
-        'name','image_thumbnail', 'code',  'net_weight',
+        'name','image_thumbnail', 'code',  'net_weight','get_vitrin_type',
          'is_sold','get_sale_date','get_customer_name'
     )
     search_fields = ('code', 'name',)
-    list_filter = ('is_sold', SaleDateFilter)
+    list_filter = ('is_sold', SaleDateFilter,)
 
     ordering = ['-sale_invoice__sale_date']
-    exclude = ('vitrin', 'sale_invoice')
+    exclude = [ 'sale_invoice']
+    autocomplete_fields = ['vitrin']
+    list_per_page = 25
 
     def get_customer_name(self, obj):
         if obj.sale_invoice and obj.sale_invoice.customer:
@@ -64,7 +79,6 @@ class OldPieceAdmin(admin.ModelAdmin):
         if obj.sale_invoice and obj.sale_invoice.sale_date:
             return obj.sale_invoice.sale_date.strftime('%Y-%m-%d')  # فرمت تاریخ میلادی
         return 'نامشخص'
-
     get_sale_date.short_description = 'تاریخ فروش'
 
 
@@ -84,20 +98,30 @@ class OldPieceAdmin(admin.ModelAdmin):
         return 'بدون تصویر'
     image_thumbnail.short_description = 'تصویر بند انگشتی'
 
+    def get_vitrin_type(self, obj):
+        if not obj.vitrin:
+            return "ندارد"
+        if hasattr(obj.vitrin, 'get_vitrin_type_display'):
+            return obj.vitrin.get_vitrin_type_display()
+        return obj.vitrin.vitrin_type or "نامشخص"
+    get_vitrin_type.short_description = 'نوع ویترین'
+
 
 # -----------------------------------
 @admin.register(CraftPiece)
 class CraftPieceAdmin(admin.ModelAdmin):
 
     list_display = (
-        'gold_type','image_thumbnail','name', 'code', 'net_weight',
+        'gold_type','image_thumbnail','name', 'code', 'net_weight','get_vitrin_type',
          'is_sold','get_sale_date','get_customer_name',
     )
     search_fields = ('code','name',)
-    list_filter = ('is_sold', 'gold_type',SaleDateFilter)
+    list_filter = ('is_sold', 'gold_type',SaleDateFilter, )
     ordering = ['-sale_invoice__sale_date']
-    exclude = ('invoice', 'vitrin', 'sale_invoice')
+    exclude = ['invoice','sale_invoice']
     actions = ['export_as_excel']
+    autocomplete_fields = ['vitrin']
+    list_per_page = 25
 
     # متد برای نمایش نام خریدار
     def get_customer_name(self, obj):
@@ -132,7 +156,13 @@ class CraftPieceAdmin(admin.ModelAdmin):
     image_thumbnail.short_description = 'تصویر بند انگشتی'
 
 
-
+    def get_vitrin_type(self, obj):
+        if not obj.vitrin:
+            return "ندارد"
+        if hasattr(obj.vitrin, 'get_vitrin_type_display'):
+            return obj.vitrin.get_vitrin_type_display()
+        return obj.vitrin.vitrin_type or "نامشخص"
+    get_vitrin_type.short_description = 'نوع ویترین'
 
 # ------------------------------
 

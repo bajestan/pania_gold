@@ -27,9 +27,13 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def register_old_piece(request):
-    vitrin, _ = CompanyVitrin.objects.get_or_create(
-        defaults={'vitrin_balance': Decimal('0.00'), 'vitrin_assets': Decimal('0.00')}
-    )
+    vitrin = CompanyVitrin.objects.filter().first()
+    if not vitrin:
+        vitrin = CompanyVitrin.objects.create(
+            vitrin_balance=Decimal('0.00'),
+            vitrin_assets=Decimal('0.00')
+        )
+
     if request.method == 'POST':
         form = OldPieceForm(request.POST, request.FILES)
         jalali_date = request.POST.get('buy_date')

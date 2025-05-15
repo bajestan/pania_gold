@@ -10,8 +10,9 @@ from finance.models import SaleInvoicePayment
 
 class CompanyVitrin(models.Model):
     VITRIN_TYPE = [
-        ('vitrin', 'بجستان'),
-        ('safebox', 'تهران'),
+        ('tehran', 'tehran'),
+        ('bajestan', 'bajestan'),
+        ('abhar', 'abhar'),
 
     ]
     vitrin_type = models.CharField(max_length=20,null=True, blank=True, choices=VITRIN_TYPE, verbose_name='نوع ویترین')
@@ -22,14 +23,9 @@ class CompanyVitrin(models.Model):
     notes = models.TextField(blank=True, null=True, verbose_name='شرح')
     created_at = models.DateTimeField(default=now, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(default=now, verbose_name='تاریخ به‌روزرسانی')
+
     def __str__(self):
-        return f"فاکتور فروش  {self.vitrin_balance}"
-
-
-
-
-
-
+        return f"ویترین {self.vitrin_type}"
 
 
 # ==============CRAFTED GOLD  زینتی ================================
@@ -132,6 +128,10 @@ class CraftPiece(models.Model):
     image = models.ImageField(upload_to=upload_to_craft, blank=True, null=True, verbose_name='تصویر بند انگشتی')
 
     def save(self, *args, **kwargs):
+        # مقداردهی پیش‌فرض ویترین
+        if not self.vitrin:
+            self.vitrin = CompanyVitrin.objects.filter(vitrin_type='tehran').first()
+
         if self.sale_invoice and self.net_weight is not None and self.sale_ojrat is not None and self.sale_price_ojrat is not None and self.sale_invoice.sale_dailyprice:
             result = calculate_sale_price(self.net_weight, self.sale_ojrat, self.sale_invoice.sale_dailyprice,self.sale_price_ojrat, self.seller_profit_percent)
             sale_price = result.get('sale_price', 0)
@@ -151,6 +151,8 @@ class CraftPiece(models.Model):
     
     def __str__(self):
         return f" {self.name}  کد {self.code}  "
+
+
 
     class Meta:
         verbose_name = 'طلای زینتی'
@@ -186,6 +188,10 @@ class OldPiece(models.Model):
     image = models.ImageField(upload_to=upload_to_old, blank=True, null=True, verbose_name='تصویر بند انگشتی')
 
     def save(self, *args, **kwargs):
+        # مقداردهی پیش‌فرض ویترین
+        if not self.vitrin:
+            self.vitrin = CompanyVitrin.objects.filter(vitrin_type='tehran').first()
+
         if self.sale_invoice and self.net_weight is not None and self.sale_ojrat is not None and self.sale_invoice.sale_dailyprice:
             result = calculate_sale_price(self.net_weight, self.sale_ojrat, self.sale_invoice.sale_dailyprice,self.sale_price_ojrat, self.seller_profit_percent)
             sale_price = result.get('sale_price', 0)
@@ -208,5 +214,7 @@ class OldPiece(models.Model):
     class Meta:
         verbose_name = 'طلای  مستعمل'
         verbose_name_plural = 'ویترین مستعمل'
+
+
 
 # --------------------------------------

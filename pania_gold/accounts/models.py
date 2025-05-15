@@ -61,12 +61,16 @@ class HomeImage(models.Model):
 # فرروشنده شرکت
 class CompanySeller(models.Model):
     name = models.CharField(max_length=50, verbose_name='نام', null=True, blank=True)
+    vitrin_name = models.CharField(max_length=50, verbose_name='نام ویترین', null=True, blank=True)
     mellicode = models.CharField(max_length=10, verbose_name='کد ملی', unique=True)
     phone_number = models.CharField(max_length=15, verbose_name='تلفن', null=True, blank=True)
     city = models.CharField(max_length=50, verbose_name='شهر', null=True, blank=True)
 
     def __str__(self):
         return f'{self.name} '
+    class Meta:
+        verbose_name = "فروشنده"
+        verbose_name_plural = "فروشندگان شرکت"
 # --------------------------------------------
 
 

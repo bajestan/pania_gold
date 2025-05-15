@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'finance.apps.FinanceConfig',
     'reports.apps.ReportsConfig',
     'paniaplatform.apps.PaniaplatformConfig',
+    'transfers.apps.TransfersConfig',
 # Third party
     'django_jalali',
     "django.contrib.humanize",
@@ -78,6 +79,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'accounts.context_processors.daily_message',
             ],
         },
     },

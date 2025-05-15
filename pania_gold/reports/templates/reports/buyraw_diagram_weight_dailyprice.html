@@ -136,7 +136,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         return 'تاریخ: ' + tooltipItems[0].label;
                     },
                     label: function(context) {
-                        return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} تومان`;
+                        const datasetLabel = context.dataset.label;
+                        const value = context.parsed.y;
+                        if (value === null || value === undefined) {
+                            return `${datasetLabel}: مقداری ثبت نشده است`;
+                        }
+                        return `${datasetLabel}: ${value.toLocaleString()} تومان`;
                     }
                 }
             },
@@ -200,15 +205,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const saleLabels = JSON.parse(saleLabelsTag.textContent);
         const saleData = JSON.parse(saleDataTag.textContent);
 
+        // ترکیب تمام تاریخ‌های منحصر به فرد
+        const allLabels = [...new Set([...purchaseLabels, ...saleLabels])].sort();
+
         const combinedCtx = document.getElementById('combinedChart').getContext('2d');
         new Chart(combinedCtx, {
             type: 'line',
             data: {
-                labels: purchaseLabels,
+                labels: allLabels,
                 datasets: [
                     {
                         label: 'میانگین وزنی قیمت خرید (تومان)',
-                        data: purchaseData,
+                        data: allLabels.map(label => {
+                            const index = purchaseLabels.indexOf(label);
+                            return index !== -1 ? purchaseData[index] : null;
+                        }),
                         borderColor: '#a16016',
                         backgroundColor: 'rgba(161, 96, 22, 0.1)',
                         fill: false,
@@ -218,7 +229,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     {
                         label: 'میانگین وزنی قیمت فروش (تومان)',
-                        data: saleData,
+                        data: allLabels.map(label => {
+                            const index = saleLabels.indexOf(label);
+                            return index !== -1 ? saleData[index] : null;
+                        }),
                         borderColor: '#1d9a71',
                         backgroundColor: 'rgba(29, 154, 113, 0.1)',
                         fill: false,
@@ -228,7 +242,42 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 ]
             },
-            options: commonOptions
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        titleFont: {
+                            family: 'IRANSans',
+                            size: 14
+                        },
+                        bodyColor: 'white',
+                        bodyFont: {
+                            family: 'IRANSans',
+                            size: 13
+                        },
+                        padding: 10,
+                        displayColors: true,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                return 'تاریخ: ' + tooltipItems[0].label;
+                            },
+                            label: function(context) {
+                                const datasetLabel = context.dataset.label;
+                                const value = context.parsed.y;
+                                if (value === null || value === undefined) {
+                                    return `${datasetLabel}: مقداری ثبت نشده است`;
+                                }
+                                return `${datasetLabel}: ${value.toLocaleString()} تومان`;
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 });
