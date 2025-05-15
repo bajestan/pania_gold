@@ -12,14 +12,10 @@ from itertools import zip_longest
 from decimal import Decimal, InvalidOperation
 
 
-
-
-
-
 def buyraw_diagram_weight_dailyprice(request):
-    # Get saved filters from session
+
     filters = request.session.get('buyraw_diagram_weight_dailyprice', {})
-    
+
     if request.GET:
         request.session['buyraw_diagram_weight_dailyprice'] = {
             'start_date': request.GET.get('start_date', ''),
@@ -27,100 +23,114 @@ def buyraw_diagram_weight_dailyprice(request):
         }
         filters = request.session['buyraw_diagram_weight_dailyprice']
 
-    # تاریخ‌های ورودی از فرم
+    # گرفتن تاریخ‌های ورودی از فرم یا سشن
     start_date_str = request.GET.get('start_date') or filters.get('start_date', '')
     end_date_str = request.GET.get('end_date') or filters.get('end_date', '')
 
-    # اگر تاریخ‌ها وجود نداشته باشن، مقدار پیش‌فرض بده
-    if not start_date_str or not end_date_str:
+    start_date = None
+    end_date = None
+
+    if start_date_str:
+        try:
+            start_date = jdatetime.datetime.strptime(start_date_str, '%Y/%m/%d').date()
+        except ValueError:
+            pass
+
+    if end_date_str:
+        try:
+            end_date = jdatetime.datetime.strptime(end_date_str, '%Y/%m/%d').date()
+        except ValueError:
+            pass
+
+    if not start_date_str and not end_date_str:
         end_date = jdatetime.date.today()
         start_date = jdatetime.date(end_date.year, 1, 1)
     else:
-        try:
-            # تبدیل تاریخ‌های ورودی به شمسی
-            start_date = jdatetime.datetime.strptime(start_date_str, '%Y/%m/%d').date()
-            end_date = jdatetime.datetime.strptime(end_date_str, '%Y/%m/%d').date()
-        except ValueError:
+
+        if start_date and not end_date:
             end_date = jdatetime.date.today()
+        elif end_date and not start_date:
             start_date = jdatetime.date(end_date.year, 1, 1)
 
-    # فیلتر داده‌ها بر اساس تاریخ شمسی
-    date_filters = {
-        'invoice_date__gte': start_date,
-        'invoice_date__lte': end_date
-    }
+    #آماده سازی فیلتر تاریخ درصورت وجود داده معتبر
+    date_filters = {}
+    if isinstance(start_date, jdatetime.date):
+        date_filters['invoice_date__gte'] = start_date
+    if isinstance(end_date, jdatetime.date):
+        date_filters['invoice_date__lte'] = end_date
 
-    raw_invoices = BuyRawInvoice.objects.filter(**date_filters)
+    # گرفتن دیتا خرید از دیتابیس
+    raw_invoices = BuyRawInvoice.objects.filter(**date_filters, supply_type='gallery')
     scrap_invoices = BuyScrapInvoice.objects.filter(**date_filters)
+    old_supply = OldPiece.objects.filter(buy_date__range=(start_date, end_date)) if isinstance(start_date,
+                                                                                               jdatetime.date) and isinstance(
+        end_date, jdatetime.date) else OldPiece.objects.none()
 
-    # استخراج داده‌های خرید به DataFrame
+    # تبدیل به دیتا فریم
     df_raw = pd.DataFrame.from_records(raw_invoices.values('invoice_date', 'net_weight', 'invoice_dailyprice'))
     df_scrap = pd.DataFrame.from_records(scrap_invoices.values('invoice_date', 'net_weight', 'invoice_dailyprice'))
+    df_old = pd.DataFrame.from_records(old_supply.values('buy_date', 'net_weight', 'buy_dailyprice'))
+    df_old.rename(columns={"buy_date": "invoice_date", "buy_dailyprice": "invoice_dailyprice"}, inplace=True)
 
-    # اضافه کردن داده های خام و قیچی
-    df_purchase = pd.concat([df_raw, df_scrap], ignore_index=True)
+    # اضافه کردن داده های خرید
+    df_purchase = pd.concat([df_raw, df_scrap, df_old], ignore_index=True)
 
-    #استخراج داده های فروش
+    # گرفتن دیتا فروش از دیتابیس
     craftpieces = CraftPiece.objects.filter(is_sold=True).select_related('sale_invoice')
     oldpieces = OldPiece.objects.filter(is_sold=True).select_related('sale_invoice')
 
-    # فیلتر داده های فروش
-    craftpieces = craftpieces.filter(sale_invoice__sale_date__range=(start_date, end_date))
-    oldpieces = oldpieces.filter(sale_invoice__sale_date__range=(start_date, end_date))
+    if isinstance(start_date, jdatetime.date) and isinstance(end_date, jdatetime.date):
+        craftpieces = craftpieces.filter(sale_invoice__sale_date__range=(start_date, end_date))
+        oldpieces = oldpieces.filter(sale_invoice__sale_date__range=(start_date, end_date))
 
-    # تبدیل داده های فروش به DateFrame
-    df_craft = pd.DataFrame.from_records(craftpieces.values('sale_invoice__sale_date', 'net_weight', 'sale_invoice__sale_dailyprice'))
-    df_old = pd.DataFrame.from_records(oldpieces.values('sale_invoice__sale_date', 'net_weight', 'sale_invoice__sale_dailyprice'))
-
-    # اضافه کردن داده های مستعمل و زینتی
-    df_sale = pd.concat([df_craft, df_old], ignore_index=True)
+    df_craft = pd.DataFrame.from_records(
+        craftpieces.values('sale_invoice__sale_date', 'net_weight', 'sale_invoice__sale_dailyprice'))
+    df_old_sale = pd.DataFrame.from_records(
+        oldpieces.values('sale_invoice__sale_date', 'net_weight', 'sale_invoice__sale_dailyprice'))
+    df_sale = pd.concat([df_craft, df_old_sale], ignore_index=True)
 
     # آماده‌سازی داده‌های خرید
+    purchase_data = {'labels': [], 'data': []}
     if not df_purchase.empty:
-        df_purchase['invoice_date'] = df_purchase['invoice_date'].apply(lambda d: d.strftime('%Y/%m/%d'))
+        df_purchase['invoice_date'] = df_purchase['invoice_date'].apply(
+            lambda d: d.strftime('%Y/%m/%d') if not isinstance(d, str) else d)
         df_purchase['net_weight'] = df_purchase['net_weight'].astype(float)
         df_purchase['invoice_dailyprice'] = df_purchase['invoice_dailyprice'].astype(float)
         df_purchase['weighted_price'] = df_purchase['net_weight'] * df_purchase['invoice_dailyprice']
-        purchase_grouped = df_purchase.groupby('invoice_date').agg({
-            'net_weight': 'sum',
-            'weighted_price': 'sum'
-        })
+        purchase_grouped = df_purchase.groupby('invoice_date').agg({'net_weight': 'sum', 'weighted_price': 'sum'})
         purchase_grouped['avg_price'] = purchase_grouped['weighted_price'] / purchase_grouped['net_weight']
         purchase_grouped = purchase_grouped.reset_index()
         purchase_data = {
             'labels': purchase_grouped['invoice_date'].tolist(),
             'data': purchase_grouped['avg_price'].round(2).tolist(),
         }
-    else:
-        purchase_data = {'labels': [], 'data': []}
 
     # آماده‌سازی داده‌های فروش
+    sale_data = {'labels': [], 'data': []}
     if not df_sale.empty:
-        df_sale['sale_invoice__sale_date'] = df_sale['sale_invoice__sale_date'].apply(lambda d: d.strftime('%Y/%m/%d'))
+        df_sale['sale_invoice__sale_date'] = df_sale['sale_invoice__sale_date'].apply(
+            lambda d: d.strftime('%Y/%m/%d') if not isinstance(d, str) else d)
         df_sale['net_weight'] = df_sale['net_weight'].astype(float)
         df_sale['sale_invoice__sale_dailyprice'] = df_sale['sale_invoice__sale_dailyprice'].astype(float)
         df_sale['weighted_price'] = df_sale['net_weight'] * df_sale['sale_invoice__sale_dailyprice']
-        sale_grouped = df_sale.groupby('sale_invoice__sale_date').agg({
-            'net_weight': 'sum',
-            'weighted_price': 'sum'
-        })
+        sale_grouped = df_sale.groupby('sale_invoice__sale_date').agg({'net_weight': 'sum', 'weighted_price': 'sum'})
         sale_grouped['avg_price'] = sale_grouped['weighted_price'] / sale_grouped['net_weight']
         sale_grouped = sale_grouped.reset_index()
         sale_data = {
             'labels': sale_grouped['sale_invoice__sale_date'].tolist(),
             'data': sale_grouped['avg_price'].round(2).tolist(),
         }
-    else:
-        sale_data = {'labels': [], 'data': []}
 
+    # آماده سازی کل داده ها
     context = {
         'purchase_data': purchase_data,
         'sale_data': sale_data,
-        'start_date': start_date_str,
-        'end_date': end_date_str,
+        'start_date': start_date_str if not isinstance(start_date, jdatetime.date) else start_date.strftime('%Y/%m/%d'),
+        'end_date': end_date_str if not isinstance(end_date, jdatetime.date) else end_date.strftime('%Y/%m/%d'),
     }
 
     return render(request, 'reports/buyraw_diagram_weight_dailyprice.html', context)
+
 
 # -------------------------------------------
 
